@@ -1,0 +1,66 @@
+@model PinterestClone.Models.Pin
+@{
+ViewData["Title"] = "Pin Details";
+var userId = Context.Session.GetInt32("UserId");
+}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card mb-4">
+                <img src="@Model.ImagePath" class="card-img-top" alt="@Model.Title"
+                    style="max-height:350px;object-fit:cover;">
+                <div class="card-body">
+                    <h3 class="card-title">@Model.Title</h3>
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                    <p class="card-text">@Model.Description</p>
+                    }
+                    <p class="text-muted">By @Model.User?.Name</p>
+                </div>
+            </div>
+            <div class="mb-4">
+                <h5>Yorumlar (@Model.PinComments?.Count ?? 0)</h5>
+                @if (Model.PinComments != null && Model.PinComments.Any())
+                {
+                <ul class="list-group mb-3">
+                    @foreach (var comment in Model.PinComments.OrderByDescending(c => c.CreatedAt))
+                    {
+                    <li class="list-group-item">
+                        <strong>@comment.User?.Name</strong> <span class="text-muted"
+                            style="font-size:0.9em">@comment.CreatedAt.ToLocalTime().ToString("g")</span>
+                        <div>@comment.Content</div>
+                    </li>
+                    }
+                </ul>
+                }
+                else
+                {
+                <p>Henüz yorum yok.</p>
+                }
+            </div>
+            @if (userId != null)
+            {
+            <div class="mb-3">
+                <h6>Yorum Ekle</h6>
+                @if (TempData["CommentError"] != null)
+                {
+                <div class="alert alert-danger">@TempData["CommentError"]</div>
+                }
+                <form asp-action="AddComment" method="post">
+                    <input type="hidden" name="pinId" value="@Model.Id" />
+                    <div class="mb-2">
+                        <textarea name="content" class="form-control" rows="3" placeholder="Yorumunuzu yazın..."
+                            required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Yorum Yap</button>
+                </form>
+            </div>
+            }
+            else
+            {
+            <div class="alert alert-info">Yorum yapmak için <a href="/User/Login">giriş yapın</a>.</div>
+            }
+            <a asp-action="Index" class="btn btn-secondary mt-3">Tüm Pinlere Dön</a>
+        </div>
+    </div>
+</div>

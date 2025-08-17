@@ -1,0 +1,80 @@
+@using PinterestClone.Models
+@{
+ViewData["Title"] = "Keşfet & Öneriler";
+var popularPins = ViewBag.PopularPins as List<Pin>;
+    var newPins = ViewBag.NewPins as List<Pin>;
+        var recommendedPins = ViewBag.RecommendedPins as List<Pin>;
+            }
+            <div class="container mt-4">
+                <h2>Keşfet</h2>
+                <hr />
+                <h4>Popüler Pinler</h4>
+                <div class="row mb-4">
+                    @if (popularPins != null && popularPins.Any())
+                    {
+                    @foreach (var pin in popularPins)
+                    {
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="@pin.ImagePath" class="card-img-top" alt="@pin.Title"
+                                style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">@pin.Title</h5>
+                                <p class="card-text">@pin.User?.Name</p>
+                                <span class="badge bg-primary">Beğeni: @pin.PinLikes?.Count ?? 0</span>
+                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar</a>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    }
+                    else
+                    {
+                    <p>Popüler pin yok.</p>
+                    }
+                </div>
+                <h4>Yeni Eklenenler</h4>
+                <div class="row mb-4">
+                    @if (newPins != null && newPins.Any())
+                    {
+                    @foreach (var pin in newPins)
+                    {
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="@pin.ImagePath" class="card-img-top" alt="@pin.Title"
+                                style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">@pin.Title</h5>
+                                <p class="card-text">@pin.User?.Name</p>
+                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar</a>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    }
+                    else
+                    {
+                    <p>Yeni pin yok.</p>
+                    }
+                </div>
+                @if (recommendedPins != null && recommendedPins.Any())
+                {
+                <h4>Sana Özel Öneriler</h4>
+                <div class="row mb-4">
+                    @foreach (var pin in recommendedPins)
+                    {
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="@pin.ImagePath" class="card-img-top" alt="@pin.Title"
+                                style="height: 150px; object-fit: cover;">
+                            <div class="card-body">
+                                <h5 class="card-title">@pin.Title</h5>
+                                <p class="card-text">@pin.User?.Name</p>
+                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar</a>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </div>

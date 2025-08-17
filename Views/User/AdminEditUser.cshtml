@@ -1,0 +1,25 @@
+@model PinterestClone.Models.User
+@{
+ViewData["Title"] = "Kullanıcı Düzenle";
+}
+<div class="container mt-4">
+    <h2>Kullanıcı Düzenle</h2>
+    <form asp-action="AdminEditUser" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <div class="mb-3">
+            <label class="form-label">Ad</label>
+            <input name="name" class="form-control" value="@Model.Name" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input name="email" class="form-control" value="@Model.Email" />
+        </div>
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" name="isAdmin" id="isAdmin" @(Model.IsAdmin ? "checked" : ""
+                ) />
+            <label class="form-check-label" for="isAdmin">Admin Yetkisi</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a asp-action="AdminPanel" class="btn btn-secondary">Geri</a>
+    </form>
+</div>

@@ -1,0 +1,79 @@
+@model PinterestClone.Models.User
+@{
+ViewData["Title"] = "Kullanıcı Profili";
+var pins = ViewBag.Pins as List<PinterestClone.Models.Pin>;
+    var boards = ViewBag.Boards as List<PinterestClone.Models.Board>;
+        }
+        <div class="container mt-4">
+            <div class="row mb-4">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">@Model.Name</h2>
+                            <p class="card-text">@Model.Email</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-8 offset-md-2">
+                    <h4>Panoları</h4>
+                    @if (boards != null && boards.Any())
+                    {
+                    <ul class="list-group mb-3">
+                        @foreach (var board in boards)
+                        {
+                        <li class="list-group-item">
+                            <strong>@board.Title</strong>
+                            @if (!string.IsNullOrWhiteSpace(board.Description))
+                            {
+                            <span class="text-muted">- @board.Description</span>
+                            }
+                        </li>
+                        }
+                    </ul>
+                    }
+                    else
+                    {
+                    <p>Henüz pano yok.</p>
+                    }
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-8 offset-md-2">
+                    <h4>Pinleri</h4>
+                    @if (pins != null && pins.Any())
+                    {
+                    <div class="row">
+                        @foreach (var pin in pins)
+                        {
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img src="@pin.ImagePath" class="card-img-top" alt="@pin.Title"
+                                    style="height: 150px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h5 class="card-title">@pin.Title</h5>
+                                    @if (!string.IsNullOrEmpty(pin.Description))
+                                    {
+                                    <p class="card-text">@pin.Description</p>
+                                    }
+                                    <a asp-controller="Pin" asp-action="Details" asp-route-id="@pin.Id"
+                                        class="btn btn-link p-0">Detaylar</a>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    }
+                    else
+                    {
+                    <p>Henüz pin yok.</p>
+                    }
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-8 offset-md-2">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Ana Sayfa</a>
+                </div>
+            </div>
+        </div>

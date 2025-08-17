@@ -1,0 +1,112 @@
+@model IEnumerable<PinterestClone.Models.Pin>
+
+    @{
+    ViewData["Title"] = "Pins";
+    }
+
+    <div class="container-fluid">
+        <div class="row mb-3">
+            <div class="col-12">
+                <form method="get" asp-action="Index" class="d-flex">
+                    <input type="text" name="query" class="form-control me-2" placeholder="Pin ara..."
+                        value="@ViewBag.Query" />
+                    <button type="submit" class="btn btn-outline-primary">Ara</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Discover Pins</h1>
+                    <a asp-action="Create" class="btn btn-primary">Add New Pin</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="pins-container">
+            @foreach (var pin in Model)
+            {
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card pin-card">
+                    <img src="@pin.ImagePath" class="card-img-top" alt="@pin.Title"
+                        style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@pin.Title</h5>
+                        @if (!string.IsNullOrEmpty(pin.Description))
+                        {
+                        <p class="card-text">@pin.Description</p>
+                        }
+                        <small class="text-muted">By @pin.User?.Name</small>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <span class="badge bg-primary">Likes: @pin.PinLikes?.Count ?? 0</span>
+                            @if (Context.Session.GetInt32("UserId") != null)
+                            {
+                            var userId = (int)Context.Session.GetInt32("UserId");
+                            bool liked = pin.PinLikes?.Any(pl => pl.UserId == userId) ?? false;
+                            if (!liked)
+                            {
+                            <button class="btn btn-outline-danger btn-sm like-btn" data-id="@pin.Id">Beğen</button>
+                            }
+                            else
+                            {
+                            <button class="btn btn-danger btn-sm unlike-btn" data-id="@pin.Id">Beğenmekten
+                                Vazgeç</button>
+                            }
+                            }
+                        </div>
+                        <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar & Yorumlar</a>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+
+        @if (!Model.Any())
+        {
+        <div class="text-center mt-5">
+            <h3>No pins found</h3>
+            <p>Be the first to add a pin!</p>
+            <a asp-action="Create" class="btn btn-primary">Add Your First Pin</a>
+        </div>
+        }
+    </div>
+
+    <style>
+        .pin-card {
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .pin-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img-top {
+            border-radius: 16px 16px 0 0;
+        }
+    </style>
+
+    @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            $(document).on('click', '.like-btn', function () {
+                var btn = $(this);
+                var id = btn.data('id');
+                $.post('/Pin/Like/' + id, function (res) {
+                    if (res.success) location.reload();
+                    else alert(res.message);
+                });
+            });
+            $(document).on('click', '.unlike-btn', function () {
+                var btn = $(this);
+                var id = btn.data('id');
+                $.post('/Pin/Unlike/' + id, function (res) {
+                    if (res.success) location.reload();
+                    else alert(res.message);
+                });
+            });
+        });
+    </script>
+    }

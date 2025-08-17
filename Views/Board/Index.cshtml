@@ -1,0 +1,36 @@
+@model IEnumerable<PinterestClone.Models.Board>
+
+    @{
+    ViewData["Title"] = "Boards";
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Your Boards</h2>
+        <a asp-action="Create" class="btn btn-primary">Create Board</a>
+    </div>
+
+    <div class="row">
+        @foreach (var board in Model)
+        {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@board.Title</h5>
+                    @if (!string.IsNullOrWhiteSpace(board.Description))
+                    {
+                    <p class="card-text">@board.Description</p>
+                    }
+                    <p class="text-muted">Pins: @board.PinBoards?.Count</p>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+    <div class="text-center mt-5">
+        <p>You don't have any boards yet.</p>
+        <a asp-action="Create" class="btn btn-primary">Create your first board</a>
+    </div>
+    }
