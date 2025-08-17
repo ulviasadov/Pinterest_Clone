@@ -1,4 +1,4 @@
-using PinterestClone.Models;
+using PinterestClone.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

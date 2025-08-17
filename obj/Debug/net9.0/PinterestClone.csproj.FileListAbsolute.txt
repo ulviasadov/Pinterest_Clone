@@ -234,3 +234,4 @@ C:\Users\HP\Desktop\Tasks\CodeAcademy2\PinterestClone\obj\Debug\net9.0\refint\Pi
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\PinterestClone\obj\Debug\net9.0\PinterestClone.pdb
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\PinterestClone\obj\Debug\net9.0\PinterestClone.genruntimeconfig.cache
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\PinterestClone\obj\Debug\net9.0\ref\PinterestClone.dll
+C:\Users\HP\Desktop\Tasks\CodeAcademy2\PinterestClone\obj\Debug\net9.0\PinterestClone.sourcelink.json
