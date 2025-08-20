@@ -1,3 +1,27 @@
+        // POST: /Pin/Save
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Save(int pinId, int boardId)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "User");
+
+            // Kullanıcıya ait mi kontrolü
+            var board = _context.Boards.FirstOrDefault(b => b.Id == boardId && b.UserId == userId.Value);
+            if (board == null)
+                return Json(new { success = false, message = "Geçersiz pano." });
+
+            // Zaten kaydedilmiş mi kontrolü
+            var alreadySaved = _context.PinBoards.Any(pb => pb.PinId == pinId && pb.BoardId == boardId);
+            if (!alreadySaved)
+            {
+                _context.PinBoards.Add(new PinBoard { PinId = pinId, BoardId = boardId });
+                _context.SaveChanges();
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, message = "Bu pin zaten bu panoda mevcut." });
+        }
 using Microsoft.AspNetCore.Mvc;
 using PinterestClone.Data;
 using PinterestClone.Models;
@@ -112,6 +136,17 @@ namespace PinterestClone.Controllers
                 .FirstOrDefault(p => p.Id == id);
             if (pin == null)
                 return NotFound();
+
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId != null)
+            {
+                var boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
+                ViewBag.Boards = boards;
+            }
+            else
+            {
+                ViewBag.Boards = null;
+            }
             return View(pin);
         }
 

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-// ...existing code...
 using PinterestClone.Data;
 using PinterestClone.Models;
 
@@ -17,8 +16,7 @@ namespace PinterestClone.Controllers
         [HttpPost]
         public IActionResult Follow(int userId)
         {
-            // var currentUserId = ...aktif kullanıcı id'sini alın...
-            var currentUserId = 0; // Burayı kendi kullanıcı id alma kodunuz ile değiştirin
+            var currentUserId = 0;
             if (currentUserId == userId) return BadRequest();
 
             var alreadyFollowing = _context.Follows
@@ -40,8 +38,7 @@ namespace PinterestClone.Controllers
         [HttpPost]
         public IActionResult Unfollow(int userId)
         {
-            // var currentUserId = ...aktif kullanıcı id'sini alın...
-            var currentUserId = 0; // Burayı kendi kullanıcı id alma kodunuz ile değiştirin
+            var currentUserId = 0;
             var follow = _context.Follows
                 .FirstOrDefault(f => f.FollowerId == currentUserId && f.FollowingId == userId);
             if (follow != null)
