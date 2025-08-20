@@ -29,7 +29,7 @@ var userId = Context.Session.GetInt32("UserId");
                                     <option value="">Pano seçin</option>
                                     @foreach (var board in boards)
                                     {
-                                    <option value="@board.Id">@board.Name</option>
+                                    <option value="@board.Id">@board.Title</option>
                                     }
                                 </select>
                                 <button type="submit" class="btn btn-success">Kaydet</button>

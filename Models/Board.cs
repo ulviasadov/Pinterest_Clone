@@ -15,6 +15,9 @@ namespace PinterestClone.Models
         public int UserId { get; set; }
         public User? User { get; set; }
 
-        public List<PinBoard> PinBoards { get; set; } = new();
+    public List<PinBoard> PinBoards { get; set; } = new();
+
+    // Kapak fotoğrafı (ilk eklenen pinin görseli)
+    public string? CoverImagePath { get; set; }
     }
 }

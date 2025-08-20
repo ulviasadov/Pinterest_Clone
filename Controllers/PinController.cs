@@ -1,3 +1,22 @@
+
+using Microsoft.AspNetCore.Mvc;
+using PinterestClone.Data;
+using PinterestClone.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace PinterestClone.Controllers
+{
+    public class PinController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public PinController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
+        {
+            _context = context;
+            _webHostEnvironment = webHostEnvironment;
+        }
+
         // POST: /Pin/Save
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -18,27 +37,24 @@
             {
                 _context.PinBoards.Add(new PinBoard { PinId = pinId, BoardId = boardId });
                 _context.SaveChanges();
+
+                // Eğer boardda hiç pin yoksa, bu pinin görselini kapak olarak ata
+                var pinCount = _context.PinBoards.Count(pb => pb.BoardId == boardId);
+                if (pinCount == 1)
+                {
+                    var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
+                    if (pin != null)
+                    {
+                        board.CoverImagePath = pin.ImagePath;
+                        _context.SaveChanges();
+                    }
+                }
                 return Json(new { success = true });
             }
             return Json(new { success = false, message = "Bu pin zaten bu panoda mevcut." });
         }
-using Microsoft.AspNetCore.Mvc;
-using PinterestClone.Data;
-using PinterestClone.Models;
-using Microsoft.EntityFrameworkCore;
 
-namespace PinterestClone.Controllers
-{
-    public class PinController : Controller
-    {
-    private readonly ApplicationDbContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-
-    public PinController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
-        {
-            _context = context;
-            _webHostEnvironment = webHostEnvironment;
-        }
+// ...existing code...
 
         // GET: /Pin
         public async Task<IActionResult> Index(string? query)
