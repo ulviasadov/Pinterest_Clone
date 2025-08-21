@@ -1,0 +1,19 @@
+@model List<PinterestClone.Models.User>
+
+    @{
+    ViewData["Title"] = "Followers";
+    }
+
+    <h2>Followers</h2>
+    <ul class="list-group">
+        @foreach (var user in Model)
+        {
+        <li class="list-group-item">
+            @user.Name (@user.Email)
+        </li>
+        }
+    </ul>
+    @if (!Model.Any())
+    {
+    <p>No followers found.</p>
+    }

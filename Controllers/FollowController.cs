@@ -51,18 +51,24 @@ namespace PinterestClone.Controllers
 
         public IActionResult Followers(int userId)
         {
-            var followers = _context.Follows
+            var followerIds = _context.Follows
                 .Where(f => f.FollowingId == userId)
                 .Select(f => f.FollowerId)
+                .ToList();
+            var followers = _context.Users
+                .Where(u => followerIds.Contains(u.Id))
                 .ToList();
             return View(followers);
         }
 
         public IActionResult Following(int userId)
         {
-            var following = _context.Follows
+            var followingIds = _context.Follows
                 .Where(f => f.FollowerId == userId)
                 .Select(f => f.FollowingId)
+                .ToList();
+            var following = _context.Users
+                .Where(u => followingIds.Contains(u.Id))
                 .ToList();
             return View(following);
         }

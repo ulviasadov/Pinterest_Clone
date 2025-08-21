@@ -1,41 +1,60 @@
-@model IEnumerable<PinterestClone.Models.Board>
+@model PinterestClone.ViewModels.BoardListViewModel
 
-    @{
-    ViewData["Title"] = "Boards";
-    }
+@{
+ViewData["Title"] = "Boards";
+}
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Your Boards</h2>
-        <a asp-action="Create" class="btn btn-primary">Create Board</a>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Your Boards</h2>
+    <a asp-action="Create" class="btn btn-primary">Create Board</a>
+</div>
 
-    <div class="row">
-        @foreach (var board in Model)
-        {
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    @if (!string.IsNullOrWhiteSpace(board.CoverImagePath))
-                    {
-                    <img src="@board.CoverImagePath" alt="Board Cover" class="img-fluid mb-2"
-                        style="max-height: 180px; object-fit: cover; width: 100%;" />
-                    }
-                    <h5 class="card-title">@board.Title</h5>
-                    @if (!string.IsNullOrWhiteSpace(board.Description))
-                    {
-                    <p class="card-text">@board.Description</p>
-                    }
-                    <p class="text-muted">Pins: @board.PinBoards?.Count</p>
-                </div>
+<div class="row">
+    @foreach (var board in Model.Boards)
+    {
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                @if (!string.IsNullOrWhiteSpace(board.CoverImagePath))
+                {
+                <img src="@board.CoverImagePath" alt="Board Cover" class="img-fluid mb-2"
+                    style="max-height: 180px; object-fit: cover; width: 100%;" />
+                }
+                <h5 class="card-title">@board.Title</h5>
+                @if (!string.IsNullOrWhiteSpace(board.Description))
+                {
+                <p class="card-text">@board.Description</p>
+                }
+                <p class="text-muted">Pins: @board.PinBoards?.Count</p>
             </div>
         </div>
-        }
-    </div>
-
-    @if (!Model.Any())
-    {
-    <div class="text-center mt-5">
-        <p>You don't have any boards yet.</p>
-        <a asp-action="Create" class="btn btn-primary">Create your first board</a>
     </div>
     }
+</div>
+
+@if (!Model.Boards.Any())
+{
+<div class="text-center mt-5">
+    <p>You don't have any boards yet.</p>
+    <a asp-action="Create" class="btn btn-primary">Create your first board</a>
+</div>
+}
+
+@if (Model.TotalPages > 1)
+{
+<nav aria-label="Board pagination">
+    <ul class="pagination justify-content-center mt-4">
+        <li class="page-item @(Model.CurrentPage == 1 ? " disabled" : "" )">
+            <a class="page-link" href="?page=@(Model.CurrentPage - 1)">Previous</a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++) { <li class="page-item @(Model.CurrentPage == i ? " active" : ""
+            )">
+            <a class="page-link" href="?page=@i">@i</a>
+            </li>
+            }
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? " disabled" : "" )">
+                <a class="page-link" href="?page=@(Model.CurrentPage + 1)">Next</a>
+            </li>
+    </ul>
+</nav>
+}

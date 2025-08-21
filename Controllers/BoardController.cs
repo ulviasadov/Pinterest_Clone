@@ -25,12 +25,36 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login", "User");
             }
 
-            var boards = await _context.Boards
+            int page = 1;
+            int pageSize = 6;
+            if (Request.Query.ContainsKey("page"))
+            {
+                int.TryParse(Request.Query["page"], out page);
+                if (page < 1) page = 1;
+            }
+
+            var query = _context.Boards
                 .Where(b => b.UserId == userId.Value)
                 .Include(b => b.PinBoards)
-                    .ThenInclude(pb => pb.Pin)
+                    .ThenInclude(pb => pb.Pin);
+
+            int totalBoards = await query.CountAsync();
+            int totalPages = (int)System.Math.Ceiling(totalBoards / (double)pageSize);
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            var boards = await query
+                .OrderByDescending(b => b.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
-            return View(boards);
+
+            var model = new PinterestClone.ViewModels.BoardListViewModel
+            {
+                Boards = boards,
+                CurrentPage = page,
+                TotalPages = totalPages
+            };
+            return View(model);
         }
 
         // GET: /Board/Create

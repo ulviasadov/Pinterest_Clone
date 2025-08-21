@@ -17,7 +17,6 @@ namespace PinterestClone.Models
 
     public List<PinBoard> PinBoards { get; set; } = new();
 
-    // Kapak fotoğrafı (ilk eklenen pinin görseli)
     public string? CoverImagePath { get; set; }
     }
 }
