@@ -9,11 +9,13 @@ var pins = ViewBag.Pins as List<PinterestClone.Models.Pin>;
                 <div class="col-md-8 offset-md-2">
                     <div class="card">
                         <div class="card-body d-flex align-items-center">
-                            @if (!string.IsNullOrWhiteSpace(Model.ProfileImagePath))
-                            {
-                            <img src="@Model.ProfileImagePath" alt="Profile Photo" class="rounded-circle me-3"
-                                style="width:80px;height:80px;object-fit:cover;" />
+                            @{
+                            var defaultProfileImage = Url.Content("~/images/PP.jpg");
+                            var showImage = !string.IsNullOrWhiteSpace(Model.ProfileImagePath) ? Model.ProfileImagePath
+                            : defaultProfileImage;
                             }
+                            <img src="@showImage" alt="Profile Photo" class="rounded-circle me-3"
+                                style="width:80px;height:80px;object-fit:cover;" />
                             <div>
                                 <h2 class="card-title">@Model.Name</h2>
                                 <p class="card-text">@Model.Email</p>

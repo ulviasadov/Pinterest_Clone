@@ -19,6 +19,12 @@ namespace PinterestClone.Controllers
     }
 // ...existing code...
 
+        // GET: /User/Register
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
         // POST: /User/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -94,6 +100,7 @@ namespace PinterestClone.Controllers
                 // Giriş başarılı, session'a yaz
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("UserName", user.Name);
+                HttpContext.Session.SetString("ProfileImagePath", user.ProfileImagePath ?? "");
 
                 if (rememberMe)
                 {
@@ -104,6 +111,11 @@ namespace PinterestClone.Controllers
                         IsEssential = true
                     });
                     Response.Cookies.Append("UserName", user.Name, new CookieOptions
+                    {
+                        Expires = DateTimeOffset.Now.AddDays(14),
+                        IsEssential = true
+                    });
+                    Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath ?? "", new CookieOptions
                     {
                         Expires = DateTimeOffset.Now.AddDays(14),
                         IsEssential = true
@@ -343,6 +355,12 @@ namespace PinterestClone.Controllers
                     }
                     user.ProfileImagePath = $"/uploads/{fileName}";
                     _context.SaveChanges();
+                    HttpContext.Session.SetString("ProfileImagePath", user.ProfileImagePath ?? "");
+                    Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath ?? "", new CookieOptions
+                    {
+                        Expires = DateTimeOffset.Now.AddDays(14),
+                        IsEssential = true
+                    });
                     TempData["SuccessMessage"] = "Profile photo uploaded successfully.";
                 }
                 catch (Exception ex)
