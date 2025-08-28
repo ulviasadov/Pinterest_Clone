@@ -26,19 +26,19 @@ namespace PinterestClone.Controllers
             if (userId == null)
                 return RedirectToAction("Login", "User");
 
-            // Kullanıcıya ait mi kontrolü
+            // Check if board belongs to user
             var board = _context.Boards.FirstOrDefault(b => b.Id == boardId && b.UserId == userId.Value);
             if (board == null)
-                return Json(new { success = false, message = "Geçersiz pano." });
+                return Json(new { success = false, message = "Invalid board." });
 
-            // Zaten kaydedilmiş mi kontrolü
+            // Check if already saved
             var alreadySaved = _context.PinBoards.Any(pb => pb.PinId == pinId && pb.BoardId == boardId);
             if (!alreadySaved)
             {
                 _context.PinBoards.Add(new PinBoard { PinId = pinId, BoardId = boardId });
                 _context.SaveChanges();
 
-                // Eğer boardda hiç pin yoksa, bu pinin görselini kapak olarak ata
+                // If this is the first pin in the board, set as cover image
                 var pinCount = _context.PinBoards.Count(pb => pb.BoardId == boardId);
                 if (pinCount == 1)
                 {
@@ -51,7 +51,7 @@ namespace PinterestClone.Controllers
                 }
                 return Json(new { success = true });
             }
-            return Json(new { success = false, message = "Bu pin zaten bu panoda mevcut." });
+            return Json(new { success = false, message = "This pin already exists in this board." });
         }
 
 // ...existing code...
@@ -90,13 +90,14 @@ namespace PinterestClone.Controllers
         // POST: /Pin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Pin pin, IFormFile imageFile, int[] boardIds)
+    public async Task<IActionResult> Create([FromForm] Pin pin, [FromForm] IFormFile imageFile, [FromForm] int[] boardIds)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
             {
                 return RedirectToAction("Login", "User");
             }
+
 
             if (ModelState.IsValid)
             {
@@ -108,7 +109,8 @@ namespace PinterestClone.Controllers
                         Directory.CreateDirectory(uploadsFolder);
                     }
 
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
+                    var sanitizedFileName = Path.GetFileName(imageFile.FileName);
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + sanitizedFileName;
                     var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -123,13 +125,16 @@ namespace PinterestClone.Controllers
                 _context.Pins.Add(pin);
                 await _context.SaveChangesAsync();
 
-                // Seçili panolara PinBoard ilişkisi ekle
-                if (boardIds != null && boardIds.Length > 0)
+                if (boardIds.Length > 0)
                 {
                     foreach (var boardId in boardIds)
                     {
-                        var pinBoard = new PinBoard { PinId = pin.Id, BoardId = boardId };
-                        _context.PinBoards.Add(pinBoard);
+                        var exists = _context.PinBoards.Any(pb => pb.PinId == pin.Id && pb.BoardId == boardId);
+                        if (!exists)
+                        {
+                            var pinBoard = new PinBoard { PinId = pin.Id, BoardId = boardId };
+                            _context.PinBoards.Add(pinBoard);
+                        }
                     }
                     await _context.SaveChangesAsync();
                 }
@@ -142,7 +147,6 @@ namespace PinterestClone.Controllers
             return View(pin);
         }
 
-        // GET: /Pin/Details/5
         public IActionResult Details(int id)
         {
             var pin = _context.Pins
@@ -166,7 +170,6 @@ namespace PinterestClone.Controllers
             return View(pin);
         }
 
-        // POST: /Pin/AddComment
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddComment(int pinId, string content)
@@ -176,7 +179,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login", "User");
             if (string.IsNullOrWhiteSpace(content))
             {
-                TempData["CommentError"] = "Yorum boş olamaz.";
+                TempData["CommentError"] = "Comment can not be empty.";
                 return RedirectToAction("Details", new { id = pinId });
             }
             var comment = new PinComment
@@ -197,7 +200,7 @@ namespace PinterestClone.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
-                return Json(new { success = false, message = "Giriş yapmalısınız." });
+                return Json(new { success = false, message = "You must be logged in." });
 
             var alreadyLiked = _context.PinLikes.Any(pl => pl.PinId == id && pl.UserId == userId.Value);
             if (!alreadyLiked)
@@ -206,7 +209,7 @@ namespace PinterestClone.Controllers
                 _context.SaveChanges();
                 return Json(new { success = true });
             }
-            return Json(new { success = false, message = "Zaten beğendiniz." });
+            return Json(new { success = false, message = "You have already liked this pin." });
         }
 
         // POST: /Pin/Unlike/5
@@ -215,7 +218,7 @@ namespace PinterestClone.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
-                return Json(new { success = false, message = "Giriş yapmalısınız." });
+                return Json(new { success = false, message = "You must be logged in." });
 
             var like = _context.PinLikes.FirstOrDefault(pl => pl.PinId == id && pl.UserId == userId.Value);
             if (like != null)
@@ -224,7 +227,7 @@ namespace PinterestClone.Controllers
                 _context.SaveChanges();
                 return Json(new { success = true });
             }
-            return Json(new { success = false, message = "Beğeniniz bulunamadı." });
+            return Json(new { success = false, message = "Like not found." });
         }
 
         // GET: /Pin/Explore

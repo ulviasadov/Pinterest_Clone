@@ -6,24 +6,27 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
             }
             <div class="container mt-4">
                 <h2>Admin Panel</h2>
+                <div class="alert alert-info text-center mb-4">
+                    Welcome to Admin Panel!
+                </div>
                 <hr />
                 <div class="mb-3">
-                    <a asp-action="AdminAddUser" class="btn btn-success">Yeni Kullanıcı Ekle</a>
+                    <a asp-action="AdminAddUser" class="btn btn-success">Add New User</a>
                     <form method="get" asp-action="AdminPanel" class="d-inline-block ms-3">
-                        <input type="text" name="userSearch" placeholder="Kullanıcı ara..."
+                        <input type="text" name="userSearch" placeholder="Search user..."
                             class="form-control d-inline-block w-auto" style="display:inline-block;width:200px;" />
-                        <button type="submit" class="btn btn-outline-primary btn-sm">Ara</button>
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Search</button>
                     </form>
                 </div>
-                <h4>Kullanıcılar</h4>
+                <h4>Users</h4>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Ad</th>
+                            <th>Name</th>
                             <th>Email</th>
                             <th>Admin</th>
-                            <th>İşlem</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,27 +36,28 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                             <td>@user.Id</td>
                             <td>@user.Name</td>
                             <td>@user.Email</td>
-                            <td>@(user.IsAdmin ? "Evet" : "Hayır")</td>
+                            <td>@(user.IsAdmin ? "Yes" : "No")</td>
                             <td>
                                 @if (!user.IsAdmin)
                                 {
                                 <a asp-action="AdminEditUser" asp-route-id="@user.Id"
-                                    class="btn btn-warning btn-sm">Düzenle</a>
-                                <a asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger btn-sm">Sil</a>
+                                    class="btn btn-warning btn-sm">Edit</a>
+                                <a asp-action="DeleteUser" asp-route-id="@user.Id"
+                                    class="btn btn-danger btn-sm">Delete</a>
                                 }
                             </td>
                         </tr>
                         }
                     </tbody>
                 </table>
-                <h4>Pinler</h4>
+                <h4>Pins</h4>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Başlık</th>
-                            <th>Sahip</th>
-                            <th>İşlem</th>
+                            <th>Title</th>
+                            <th>Owner</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -64,20 +68,21 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                             <td>@pin.Title</td>
                             <td>@pin.UserId</td>
                             <td>
-                                <a asp-action="DeletePin" asp-route-id="@pin.Id" class="btn btn-danger btn-sm">Sil</a>
+                                <a asp-action="DeletePin" asp-route-id="@pin.Id"
+                                    class="btn btn-danger btn-sm">Delete</a>
                             </td>
                         </tr>
                         }
                     </tbody>
                 </table>
-                <h4>Panolar</h4>
+                <h4>Boards</h4>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>Başlık</th>
-                            <th>Sahip</th>
-                            <th>İşlem</th>
+                            <th>Title</th>
+                            <th>Owner</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,7 +94,7 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                             <td>@board.UserId</td>
                             <td>
                                 <a asp-action="DeleteBoard" asp-route-id="@board.Id"
-                                    class="btn btn-danger btn-sm">Sil</a>
+                                    class="btn btn-danger btn-sm">Delete</a>
                             </td>
                         </tr>
                         }

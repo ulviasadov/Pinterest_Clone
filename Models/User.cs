@@ -21,9 +21,11 @@ namespace PinterestClone.Models
         [MinLength(3, ErrorMessage = "Şifre en az 3 karakter olmalıdır")]
         public string Password { get; set; } = string.Empty;
 
-        public bool IsAdmin { get; set; } = false;
+    public bool IsAdmin { get; set; } = false;
 
-        public List<PinLike> PinLikes { get; set; } = new();
-        public List<PinComment> PinComments { get; set; } = new();
+    public string? ProfileImagePath { get; set; }
+
+    public List<PinLike> PinLikes { get; set; } = new();
+    public List<PinComment> PinComments { get; set; } = new();
     }
 } 

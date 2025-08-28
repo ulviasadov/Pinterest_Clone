@@ -1,9 +1,9 @@
 @model PinterestClone.Models.User
 @{
-ViewData["Title"] = "Yeni Kullanıcı Ekle";
+ViewData["Title"] = "Add New User";
 }
 <div class="container mt-4">
-    <h2>Yeni Kullanıcı Ekle</h2>
+    <h2>Add New User</h2>
     <form asp-action="AdminAddUser" method="post">
         <div class="mb-3">
             <label asp-for="Name" class="form-label">Ad</label>
@@ -16,7 +16,7 @@ ViewData["Title"] = "Yeni Kullanıcı Ekle";
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
         <div class="mb-3">
-            <label asp-for="Password" class="form-label">Şifre</label>
+            <label asp-for="Password" class="form-label">Password</label>
             <input asp-for="Password" class="form-control" type="password" />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
@@ -24,7 +24,7 @@ ViewData["Title"] = "Yeni Kullanıcı Ekle";
             <input type="checkbox" class="form-check-input" name="isAdmin" id="isAdmin" />
             <label class="form-check-label" for="isAdmin">Admin Yetkisi</label>
         </div>
-        <button type="submit" class="btn btn-primary">Ekle</button>
+        <button type="submit" class="btn btn-primary">Add</button>
         <a asp-action="AdminPanel" class="btn btn-secondary">Geri</a>
     </form>
 </div>

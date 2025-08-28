@@ -8,9 +8,9 @@
         <div class="row mb-3">
             <div class="col-12">
                 <form method="get" asp-action="Index" class="d-flex">
-                    <input type="text" name="query" class="form-control me-2" placeholder="Pin ara..."
+                    <input type="text" name="query" class="form-control me-2" placeholder="Search pin..."
                         value="@ViewBag.Query" />
-                    <button type="submit" class="btn btn-outline-primary">Ara</button>
+                    <button type="submit" class="btn btn-outline-primary">Search</button>
                 </form>
             </div>
         </div>
@@ -45,16 +45,15 @@
                             bool liked = pin.PinLikes?.Any(pl => pl.UserId == userId) ?? false;
                             if (!liked)
                             {
-                            <button class="btn btn-outline-danger btn-sm like-btn" data-id="@pin.Id">Beğen</button>
+                            <button class="btn btn-outline-danger btn-sm like-btn" data-id="@pin.Id">Like</button>
                             }
                             else
                             {
-                            <button class="btn btn-danger btn-sm unlike-btn" data-id="@pin.Id">Beğenmekten
-                                Vazgeç</button>
+                            <button class="btn btn-danger btn-sm unlike-btn" data-id="@pin.Id">Unlike</button>
                             }
                             }
                         </div>
-                        <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar & Yorumlar</a>
+                        <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Details $ Comments</a>
                     </div>
                 </div>
             </div>

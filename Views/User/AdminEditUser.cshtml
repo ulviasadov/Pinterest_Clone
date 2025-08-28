@@ -1,9 +1,9 @@
 @model PinterestClone.Models.User
 @{
-ViewData["Title"] = "Kullanıcı Düzenle";
+ViewData["Title"] = "Edit User";
 }
 <div class="container mt-4">
-    <h2>Kullanıcı Düzenle</h2>
+    <h2>Edit User</h2>
     <form asp-action="AdminEditUser" method="post">
         <input type="hidden" name="id" value="@Model.Id" />
         <div class="mb-3">

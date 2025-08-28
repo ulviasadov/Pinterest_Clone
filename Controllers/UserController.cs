@@ -7,30 +7,28 @@ using System.Linq;
 
 namespace PinterestClone.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
-    private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-    public UserController(ApplicationDbContext context)
+        public UserController(ApplicationDbContext context)
         {
             _context = context;
-        }
-
-        // GET: /User/Register
-        public IActionResult Register()
-        {
-            return View();
-        }
+    // ...existing code...
+// ...existing code...
+    }
+// ...existing code...
 
         // POST: /User/Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Register(User user)
         {
-            // PasswordHash alanını ModelState'den çıkar (form binding sırasında boş geliyor)
+            RestoreSessionFromCookies();
+            // Remove PasswordHash from ModelState (empty during form binding)
             ModelState.Remove("PasswordHash");
 
-            // Debug: ModelState hatalarını kontrol et
+            // Debug: Check ModelState errors
             if (!ModelState.IsValid)
             {
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
@@ -40,10 +38,10 @@ namespace PinterestClone.Controllers
                 return View(user);
             }
 
-            // Email kontrolü
+            // Email check
             if (_context.Users.Any(u => u.Email == user.Email))
             {
-                ModelState.AddModelError("Email", "Bu email adresi zaten kullanılıyor.");
+                ModelState.AddModelError("Email", "This email address is already in use.");
                 return View(user);
             }
 
@@ -58,12 +56,12 @@ namespace PinterestClone.Controllers
                 _context.Users.Add(user);
                 _context.SaveChanges();
 
-                TempData["SuccessMessage"] = "Kayıt başarılı! Şimdi giriş yapabilirsiniz.";
+                TempData["SuccessMessage"] = "Registration successful! You can now log in.";
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Kayıt sırasında hata oluştu: {ex.Message}");
+                ModelState.AddModelError("", $"An error occurred during registration: {ex.Message}");
                 return View(user);
             }
         }
@@ -71,18 +69,20 @@ namespace PinterestClone.Controllers
         // GET: /User/Login
         public IActionResult Login()
         {
+            RestoreSessionFromCookies();
             return View();
         }
 
         // POST: /User/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(string email, string password)
+        public IActionResult Login(string email, string password, bool rememberMe)
         {
-            // Boş alan kontrolü
+            RestoreSessionFromCookies();
+            // Empty field check
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
-                ModelState.AddModelError("", "Email ve şifre alanları boş olamaz.");
+                ModelState.AddModelError("", "Email and password fields cannot be empty.");
                 return View();
             }
 
@@ -94,6 +94,21 @@ namespace PinterestClone.Controllers
                 // Giriş başarılı, session'a yaz
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("UserName", user.Name);
+
+                if (rememberMe)
+                {
+                    // Persistent cookie (örnek, UserId için)
+                    Response.Cookies.Append("UserId", user.Id.ToString(), new CookieOptions
+                    {
+                        Expires = DateTimeOffset.Now.AddDays(14),
+                        IsEssential = true
+                    });
+                    Response.Cookies.Append("UserName", user.Name, new CookieOptions
+                    {
+                        Expires = DateTimeOffset.Now.AddDays(14),
+                        IsEssential = true
+                    });
+                }
                 return RedirectToAction("Index", "Home");
             }
 
@@ -104,6 +119,7 @@ namespace PinterestClone.Controllers
         // GET: /User/Logout
         public IActionResult Logout()
         {
+            RestoreSessionFromCookies();
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
@@ -111,6 +127,7 @@ namespace PinterestClone.Controllers
         // GET: /User/Profile/{id?}
         public IActionResult Profile(int? id)
         {
+            RestoreSessionFromCookies();
             int userId;
             if (id.HasValue)
             {
@@ -120,8 +137,26 @@ namespace PinterestClone.Controllers
             {
                 var sessionUserId = HttpContext.Session.GetInt32("UserId");
                 if (sessionUserId == null)
-                    return RedirectToAction("Login");
-                userId = sessionUserId.Value;
+                {
+                    // Try to restore session from cookies
+                    var cookieUserId = Request.Cookies["UserId"];
+                    var cookieUserName = Request.Cookies["UserName"];
+                    if (!string.IsNullOrEmpty(cookieUserId) && int.TryParse(cookieUserId, out int parsedUserId))
+                    {
+                        HttpContext.Session.SetInt32("UserId", parsedUserId);
+                        if (!string.IsNullOrEmpty(cookieUserName))
+                            HttpContext.Session.SetString("UserName", cookieUserName);
+                        userId = parsedUserId;
+                    }
+                    else
+                    {
+                        return RedirectToAction("Login");
+                    }
+                }
+                else
+                {
+                    userId = sessionUserId.Value;
+                }
             }
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (user == null)
@@ -274,5 +309,47 @@ namespace PinterestClone.Controllers
                 return Convert.ToBase64String(bytes);
             }
         }
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public IActionResult UploadProfilePhoto(IFormFile profileImage)
+            {
+                var userId = HttpContext.Session.GetInt32("UserId");
+                if (userId == null)
+                {
+                    TempData["ErrorMessage"] = "Session not found. Please log in again.";
+                    return RedirectToAction("Login");
+                }
+                var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToAction("Profile");
+                }
+                if (profileImage == null || profileImage.Length == 0)
+                {
+                    TempData["ErrorMessage"] = "Please select a photo.";
+                    return RedirectToAction("Profile");
+                }
+                try
+                {
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                    if (!Directory.Exists(uploadsFolder))
+                        Directory.CreateDirectory(uploadsFolder);
+                    var fileName = $"user_{user.Id}_{DateTime.Now.Ticks}{Path.GetExtension(profileImage.FileName)}";
+                    var filePath = Path.Combine(uploadsFolder, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        profileImage.CopyTo(stream);
+                    }
+                    user.ProfileImagePath = $"/uploads/{fileName}";
+                    _context.SaveChanges();
+                    TempData["SuccessMessage"] = "Profile photo uploaded successfully.";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Error uploading photo: {ex.Message}";
+                }
+                return RedirectToAction("Profile");
+            }
     }
-} 
+}

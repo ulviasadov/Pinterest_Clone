@@ -88,5 +88,52 @@ namespace PinterestClone.Controllers
             }
             return View(board);
         }
+        // GET: /Board/Edit/{id}
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "User");
+            var board = await _context.Boards.FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
+            if (board == null)
+                return NotFound();
+            return View(board);
+        }
+
+        // POST: /Board/Edit/{id}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Board board)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "User");
+            var existingBoard = await _context.Boards.FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
+            if (existingBoard == null)
+                return NotFound();
+            if (ModelState.IsValid)
+            {
+                existingBoard.Title = board.Title;
+                existingBoard.Description = board.Description;
+                existingBoard.CoverImagePath = board.CoverImagePath;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(board);
+        }
+        // GET: /Board/Delete/{id}
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "User");
+            var board = await _context.Boards.FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
+            if (board == null)
+                return NotFound();
+            _context.Boards.Remove(board);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

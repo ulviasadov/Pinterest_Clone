@@ -26,6 +26,11 @@ ViewData["Title"] = "Boards";
                 <p class="card-text">@board.Description</p>
                 }
                 <p class="text-muted">Pins: @board.PinBoards?.Count</p>
+                <div class="mt-2">
+                    <a asp-action="Edit" asp-route-id="@board.Id" class="btn btn-sm btn-warning me-2">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@board.Id" class="btn btn-sm btn-danger"
+                        onclick="return confirm('Are you sure you want to delete this board?');">Delete</a>
+                </div>
             </div>
         </div>
     </div>

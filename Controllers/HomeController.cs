@@ -15,6 +15,20 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+    // If there is no session, read UserId and UserName from cookie
+        if (HttpContext.Session.GetInt32("UserId") == null)
+        {
+            var userIdCookie = Request.Cookies["UserId"];
+            var userNameCookie = Request.Cookies["UserName"];
+            if (!string.IsNullOrEmpty(userIdCookie) && !string.IsNullOrEmpty(userNameCookie))
+            {
+                if (int.TryParse(userIdCookie, out int userId))
+                {
+                    HttpContext.Session.SetInt32("UserId", userId);
+                    HttpContext.Session.SetString("UserName", userNameCookie);
+                }
+            }
+        }
         return View();
     }
 

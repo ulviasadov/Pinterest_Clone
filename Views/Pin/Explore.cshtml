@@ -1,14 +1,14 @@
 @using PinterestClone.Models
 @{
-ViewData["Title"] = "Keşfet & Öneriler";
+ViewData["Title"] = "Explore & Suggestions";
 var popularPins = ViewBag.PopularPins as List<Pin>;
     var newPins = ViewBag.NewPins as List<Pin>;
         var recommendedPins = ViewBag.RecommendedPins as List<Pin>;
             }
             <div class="container mt-4">
-                <h2>Keşfet</h2>
+                <h2>Explore</h2>
                 <hr />
-                <h4>Popüler Pinler</h4>
+                <h4>Popular Pins</h4>
                 <div class="row mb-4">
                     @if (popularPins != null && popularPins.Any())
                     {
@@ -21,8 +21,8 @@ var popularPins = ViewBag.PopularPins as List<Pin>;
                             <div class="card-body">
                                 <h5 class="card-title">@pin.Title</h5>
                                 <p class="card-text">@pin.User?.Name</p>
-                                <span class="badge bg-primary">Beğeni: @pin.PinLikes?.Count ?? 0</span>
-                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar</a>
+                                <span class="badge bg-primary">Likes: @pin.PinLikes?.Count ?? 0</span>
+                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Details</a>
                             </div>
                         </div>
                     </div>
@@ -30,7 +30,7 @@ var popularPins = ViewBag.PopularPins as List<Pin>;
                     }
                     else
                     {
-                    <p>Popüler pin yok.</p>
+                    <p>No popular pins.</p>
                     }
                 </div>
                 <h4>Yeni Eklenenler</h4>
@@ -46,7 +46,7 @@ var popularPins = ViewBag.PopularPins as List<Pin>;
                             <div class="card-body">
                                 <h5 class="card-title">@pin.Title</h5>
                                 <p class="card-text">@pin.User?.Name</p>
-                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar</a>
+                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Details</a>
                             </div>
                         </div>
                     </div>
@@ -54,12 +54,12 @@ var popularPins = ViewBag.PopularPins as List<Pin>;
                     }
                     else
                     {
-                    <p>Yeni pin yok.</p>
+                    <p>No new pins.</p>
                     }
                 </div>
                 @if (recommendedPins != null && recommendedPins.Any())
                 {
-                <h4>Sana Özel Öneriler</h4>
+                <h4>Personalized Suggestions</h4>
                 <div class="row mb-4">
                     @foreach (var pin in recommendedPins)
                     {
@@ -70,7 +70,7 @@ var popularPins = ViewBag.PopularPins as List<Pin>;
                             <div class="card-body">
                                 <h5 class="card-title">@pin.Title</h5>
                                 <p class="card-text">@pin.User?.Name</p>
-                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Detaylar</a>
+                                <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Details</a>
                             </div>
                         </div>
                     </div>

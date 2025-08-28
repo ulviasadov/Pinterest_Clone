@@ -26,7 +26,7 @@ var userId = Context.Session.GetInt32("UserId");
                             <input type="hidden" name="pinId" value="@Model.Id" />
                             <div class="input-group mb-2">
                                 <select name="boardId" class="form-select" required>
-                                    <option value="">Pano seçin</option>
+                                    <option value="">Select board</option>
                                     @foreach (var board in boards)
                                     {
                                     <option value="@board.Id">@board.Title</option>
@@ -38,12 +38,12 @@ var userId = Context.Session.GetInt32("UserId");
                         }
                         else
                         {
-                        <div class="alert alert-info">Pin kaydetmek için önce bir pano oluşturmalısınız.</div>
+                        <div class="alert alert-info">You must create a board before saving a pin.</div>
                         }
                         }
                 </div>
                 <div class="mb-4">
-                    <h5>Yorumlar (@Model.PinComments?.Count ?? 0)</h5>
+                    <h5>Comments (@Model.PinComments?.Count ?? 0)</h5>
                     @if (Model.PinComments != null && Model.PinComments.Any())
                     {
                     <ul class="list-group mb-3">
@@ -59,13 +59,13 @@ var userId = Context.Session.GetInt32("UserId");
                     }
                     else
                     {
-                    <p>Henüz yorum yok.</p>
+                    <p>No comments yet.</p>
                     }
                 </div>
                 @if (userId != null)
                 {
                 <div class="mb-3">
-                    <h6>Yorum Ekle</h6>
+                    <h6>Add Comment</h6>
                     @if (TempData["CommentError"] != null)
                     {
                     <div class="alert alert-danger">@TempData["CommentError"]</div>
@@ -73,18 +73,18 @@ var userId = Context.Session.GetInt32("UserId");
                     <form asp-action="AddComment" method="post">
                         <input type="hidden" name="pinId" value="@Model.Id" />
                         <div class="mb-2">
-                            <textarea name="content" class="form-control" rows="3" placeholder="Yorumunuzu yazın..."
+                            <textarea name="content" class="form-control" rows="3" placeholder="Write your comment..."
                                 required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Yorum Yap</button>
+                        <button type="submit" class="btn btn-primary">Submit Comment</button>
                     </form>
                 </div>
                 }
                 else
                 {
-                <div class="alert alert-info">Yorum yapmak için <a href="/User/Login">giriş yapın</a>.</div>
+                <div class="alert alert-info">Please <a href="/User/Login">login</a> to comment.</div>
                 }
-                <a asp-action="Index" class="btn btn-secondary mt-3">Tüm Pinlere Dön</a>
+                <a asp-action="Index" class="btn btn-secondary mt-3">Back to All Pins</a>
             </div>
         </div>
     </div>
