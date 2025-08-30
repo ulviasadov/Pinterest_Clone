@@ -17,7 +17,6 @@ namespace PinterestClone.Models
         [Required]
         public string ImagePath { get; set; } = string.Empty;
 
-        // Kullanıcı ile ilişki
         public int UserId { get; set; }
         public User? User { get; set; }
 

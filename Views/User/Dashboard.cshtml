@@ -1,0 +1,80 @@
+@{
+ViewData["Title"] = "Dashboard";
+var userCount = ViewBag.UserCount ?? 0;
+var pinCount = ViewBag.PinCount ?? 0;
+var boardCount = ViewBag.BoardCount ?? 0;
+var reportCount = ViewBag.ReportCount ?? 0;
+var topUsers = ViewBag.TopUsers as List<PinterestClone.Models.User>;
+    var topPins = ViewBag.TopPins as List<PinterestClone.Models.Pin>;
+        }
+        <div class="container mt-4">
+            <h2>Dashboard</h2>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <p class="display-6">@userCount</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Pins</h5>
+                            <p class="display-6">@pinCount</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Boards</h5>
+                            <p class="display-6">@boardCount</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Reports</h5>
+                            <p class="display-6">@reportCount</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h4>Top Active Users</h4>
+                    <ul class="list-group">
+                        @if (topUsers != null && topUsers.Any())
+                        {
+                        foreach (var user in topUsers)
+                        {
+                        <li class="list-group-item">@user.Name (@user.Email)</li>
+                        }
+                        }
+                        else
+                        {
+                        <li class="list-group-item">No data</li>
+                        }
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Most Reported Pins</h4>
+                    <ul class="list-group">
+                        @if (topPins != null && topPins.Any())
+                        {
+                        foreach (var pin in topPins)
+                        {
+                        <li class="list-group-item">@pin.Title (Id: @pin.Id)</li>
+                        }
+                        }
+                        else
+                        {
+                        <li class="list-group-item">No data</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>

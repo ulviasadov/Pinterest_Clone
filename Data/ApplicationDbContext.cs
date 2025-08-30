@@ -15,6 +15,7 @@ namespace PinterestClone.Data
         public DbSet<PinLike> PinLikes { get; set; }
         public DbSet<PinComment> PinComments { get; set; }
         public DbSet<Follow> Follows { get; set; }
+    public DbSet<PinReport> PinReports { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using PinterestClone.Data;
 using PinterestClone.Models;
@@ -16,6 +15,31 @@ namespace PinterestClone.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Report(int pinId, string reason)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login", "User");
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                TempData["ErrorMessage"] = "Please provide a reason.";
+                return RedirectToAction("Details", new { id = pinId });
+            }
+            var report = new PinReport
+            {
+                PinId = pinId,
+                UserId = userId.Value,
+                Reason = reason,
+                ReportedAt = DateTime.Now
+            };
+            _context.Add(report);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Report submitted.";
+            return RedirectToAction("Details", new { id = pinId });
+    }
 
         // POST: /Pin/Save
         [HttpPost]

@@ -14,9 +14,32 @@ namespace PinterestClone.Controllers
         public UserController(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        // GET: /User/Dashboard
+        public IActionResult Dashboard()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login");
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null || !user.IsAdmin)
+                return Unauthorized();
+            ViewBag.UserCount = _context.Users.Count();
+            ViewBag.PinCount = _context.Pins.Count();
+            ViewBag.BoardCount = _context.Boards.Count();
+            ViewBag.ReportCount = _context.Set<PinReport>().Count();
+            ViewBag.TopUsers = _context.Users
+                .OrderByDescending(u => _context.Pins.Count(p => p.UserId == u.Id) + _context.Boards.Count(b => b.UserId == u.Id))
+                .Take(5)
+                .ToList();
+            ViewBag.TopPins = _context.Pins
+                .OrderByDescending(p => _context.Set<PinReport>().Count(r => r.PinId == p.Id))
+                .Take(5)
+                .ToList();
+            return View();
+        }
     // ...existing code...
-// ...existing code...
-    }
 // ...existing code...
 
         // GET: /User/Register
@@ -197,6 +220,7 @@ namespace PinterestClone.Controllers
             ViewBag.Users = users.ToList();
             ViewBag.Pins = _context.Pins.ToList();
             ViewBag.Boards = _context.Boards.ToList();
+            ViewBag.ReportedPins = _context.Set<PinReport>().ToList();
             return View();
         }
 

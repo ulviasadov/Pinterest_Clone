@@ -165,6 +165,32 @@ namespace PinterestClone.Migrations
                     b.ToTable("PinLikes");
                 });
 
+            modelBuilder.Entity("PinterestClone.Models.PinReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PinId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReportedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PinReports");
+                });
+
             modelBuilder.Entity("PinterestClone.Models.User", b =>
                 {
                     b.Property<int>("Id")

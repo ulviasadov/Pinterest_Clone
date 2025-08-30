@@ -56,6 +56,7 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                         <tr>
                             <th>Id</th>
                             <th>Title</th>
+                            <th>Owner Id</th>
                             <th>Owner</th>
                             <th>Action</th>
                         </tr>
@@ -67,6 +68,7 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                             <td>@pin.Id</td>
                             <td>@pin.Title</td>
                             <td>@pin.UserId</td>
+                            <td>@(users?.FirstOrDefault(u => u.Id == pin.UserId)?.Name ?? "Unknown")</td>
                             <td>
                                 <a asp-action="DeletePin" asp-route-id="@pin.Id"
                                     class="btn btn-danger btn-sm">Delete</a>
@@ -81,6 +83,7 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                         <tr>
                             <th>Id</th>
                             <th>Title</th>
+                            <th>Owner Id</th>
                             <th>Owner</th>
                             <th>Action</th>
                         </tr>
@@ -92,6 +95,7 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                             <td>@board.Id</td>
                             <td>@board.Title</td>
                             <td>@board.UserId</td>
+                            <td>@(users?.FirstOrDefault(u => u.Id == board.UserId)?.Name ?? "Unknown")</td>
                             <td>
                                 <a asp-action="DeleteBoard" asp-route-id="@board.Id"
                                     class="btn btn-danger btn-sm">Delete</a>
@@ -100,4 +104,41 @@ var users = ViewBag.Users as List<PinterestClone.Models.User>;
                         }
                     </tbody>
                 </table>
+                <h4>Reported Pins</h4>
+                @if (ViewBag.ReportedPins != null && ((List<PinterestClone.Models.PinReport>
+                    )ViewBag.ReportedPins).Any())
+                    {
+                    var reportedPins = (List<PinterestClone.Models.PinReport>)ViewBag.ReportedPins;
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Report Id</th>
+                                    <th>Pin Id</th>
+                                    <th>Pin Title</th>
+                                    <th>Reported By</th>
+                                    <th>Reason</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var report in reportedPins)
+                                {
+                                var pin = pins?.FirstOrDefault(p => p.Id == report.PinId);
+                                var user = users?.FirstOrDefault(u => u.Id == report.UserId);
+                                <tr>
+                                    <td>@report.Id</td>
+                                    <td>@report.PinId</td>
+                                    <td>@(pin?.Title ?? "Unknown")</td>
+                                    <td>@(user?.Name ?? "Unknown")</td>
+                                    <td>@report.Reason</td>
+                                    <td>@report.ReportedAt.ToString("g")</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                        }
+                        else
+                        {
+                        <div class="alert alert-success">No reported pins.</div>
+                        }
             </div>
