@@ -7,8 +7,29 @@ using System.Linq;
 
 namespace PinterestClone.Controllers
 {
-    public class UserController : BaseController
-    {
+        public class UserController : BaseController
+        {
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            public IActionResult UpdateBio(string Bio)
+            {
+                var userId = HttpContext.Session.GetInt32("UserId");
+                if (userId == null)
+                {
+                    TempData["ErrorMessage"] = "Session not found. Please log in again.";
+                    return RedirectToAction("Login");
+                }
+                var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "User not found.";
+                    return RedirectToAction("Profile");
+                }
+                user.Bio = Bio;
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Bio updated successfully.";
+                return RedirectToAction("Profile");
+            }
         private readonly ApplicationDbContext _context;
 
         public UserController(ApplicationDbContext context)
@@ -76,16 +97,20 @@ namespace PinterestClone.Controllers
 
             try
             {
-                // Şifreyi hashle
-                user.PasswordHash = HashPassword(user.Password);
-                
-                // Password property'sini temizle (veritabanına kaydedilmesin)
+                // Hash the password
+                var passwordHash = HashPassword(user.Password);
+                // Clear the Password property (do not save to database)
                 user.Password = string.Empty;
+                // Prepare user data for token
+                var userData = $"{user.Name}|{user.Email}|{passwordHash}";
+                var token = Microsoft.AspNetCore.WebUtilities.WebEncoders.Base64UrlEncode(System.Text.Encoding.UTF8.GetBytes(userData));
+                var confirmationUrl = Url.Action("ConfirmEmail", "User", new { token }, Request.Scheme);
+                var emailService = new PinterestClone.Services.EmailService();
+                var subject = "PinterestClone - Email Confirmation";
+                var body = $"<p>Your registration was successful. To confirm your account, <a href='{confirmationUrl}'>click here</a>.</p>";
+                emailService.SendEmail(user.Email, subject, body);
 
-                _context.Users.Add(user);
-                _context.SaveChanges();
-
-                TempData["SuccessMessage"] = "Registration successful! You can now log in.";
+                TempData["SuccessMessage"] = "Registration successful! Please check your email to confirm your account.";
                 return RedirectToAction("Login");
             }
             catch (Exception ex)
@@ -93,6 +118,44 @@ namespace PinterestClone.Controllers
                 ModelState.AddModelError("", $"An error occurred during registration: {ex.Message}");
                 return View(user);
             }
+
+        }
+
+        public IActionResult ConfirmEmail(string token)
+        {
+            if (string.IsNullOrEmpty(token)) return BadRequest();
+            var decoded = System.Text.Encoding.UTF8.GetString(Microsoft.AspNetCore.WebUtilities.WebEncoders.Base64UrlDecode(token));
+            var parts = decoded.Split('|');
+            if (parts.Length != 3) return BadRequest();
+            var name = parts[0];
+            var email = parts[1];
+            var passwordHash = parts[2];
+            // Check if user already exists
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+            if (user != null)
+            {
+                if (user.EmailConfirmed)
+                {
+                    TempData["SuccessMessage"] = "Email already confirmed.";
+                    return RedirectToAction("Login");
+                }
+                user.EmailConfirmed = true;
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "Email confirmed successfully. You can now log in.";
+                return RedirectToAction("Login");
+            }
+            // Add new user to database
+            var newUser = new User
+            {
+                Name = name,
+                Email = email,
+                PasswordHash = passwordHash,
+                EmailConfirmed = true
+            };
+            _context.Users.Add(newUser);
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Email confirmed successfully. You can now log in.";
+            return RedirectToAction("Login");
         }
 
         // GET: /User/Login
@@ -108,7 +171,7 @@ namespace PinterestClone.Controllers
         public IActionResult Login(string email, string password, bool rememberMe)
         {
             RestoreSessionFromCookies();
-            // Empty field check
+            // Check for empty fields
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
                 ModelState.AddModelError("", "Email and password fields cannot be empty.");
@@ -120,14 +183,19 @@ namespace PinterestClone.Controllers
 
             if (user != null)
             {
-                // Giriş başarılı, session'a yaz
+                if (!user.EmailConfirmed)
+                {
+                    ModelState.AddModelError("", "Email address not confirmed. Please check your email.");
+                    return View();
+                }
+                // Login successful, set session
                 HttpContext.Session.SetInt32("UserId", user.Id);
                 HttpContext.Session.SetString("UserName", user.Name);
                 HttpContext.Session.SetString("ProfileImagePath", user.ProfileImagePath ?? "");
 
                 if (rememberMe)
                 {
-                    // Persistent cookie (örnek, UserId için)
+                    // Persistent cookie (example, for UserId)
                     Response.Cookies.Append("UserId", user.Id.ToString(), new CookieOptions
                     {
                         Expires = DateTimeOffset.Now.AddDays(14),
@@ -147,7 +215,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            ModelState.AddModelError("", "Geçersiz email veya şifre");
+            ModelState.AddModelError("", "Invalid email or password.");
             return View();
         }
 
@@ -197,9 +265,18 @@ namespace PinterestClone.Controllers
             if (user == null)
                 return NotFound();
             var pins = _context.Pins.Where(p => p.UserId == userId).OrderByDescending(p => p.Id).ToList();
-            var boards = _context.Boards.Where(b => b.UserId == userId).OrderByDescending(b => b.Id).ToList();
+            var boards = _context.Boards.Where(b => b.UserId == userId && (!b.IsPrivate || userId == HttpContext.Session.GetInt32("UserId"))).OrderByDescending(b => b.Id).ToList();
+            var followersList = _context.Follows.Where(f => f.FollowingId == userId).Select(f => f.Follower).ToList();
+            var followingList = _context.Follows.Where(f => f.FollowerId == userId).Select(f => f.Following).ToList();
+            ViewBag.FollowersList = followersList;
+            ViewBag.FollowingList = followingList;
+            var followersCount = _context.Follows.Count(f => f.FollowingId == userId);
+            var followingCount = _context.Follows.Count(f => f.FollowerId == userId);
             ViewBag.Pins = pins;
             ViewBag.Boards = boards;
+            ViewBag.PinCount = pins.Count;
+            ViewBag.FollowersCount = followersCount;
+            ViewBag.FollowingCount = followingCount;
             return View(user);
         }
 
@@ -245,7 +322,7 @@ namespace PinterestClone.Controllers
             if (admin == null || !admin.IsAdmin) return Unauthorized();
             if (_context.Users.Any(u => u.Email == user.Email))
             {
-                ModelState.AddModelError("Email", "Bu email adresi zaten kullanılıyor.");
+                ModelState.AddModelError("Email", "This email address is already in use.");
                 return View(user);
             }
             if (!ModelState.IsValid)
@@ -285,7 +362,7 @@ namespace PinterestClone.Controllers
             if (user == null) return NotFound();
             if (_context.Users.Any(u => u.Email == email && u.Id != id))
             {
-                ModelState.AddModelError("Email", "Bu email adresi zaten kullanılıyor.");
+                ModelState.AddModelError("Email", "This email address is already in use.");
                 return View(user);
             }
             user.Name = name;

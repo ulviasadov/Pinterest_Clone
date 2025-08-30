@@ -18,5 +18,7 @@ namespace PinterestClone.Models
     public List<PinBoard> PinBoards { get; set; } = new();
 
     public string? CoverImagePath { get; set; }
+
+    public bool IsPrivate { get; set; } = false;
     }
 }

@@ -27,6 +27,14 @@ ViewData["Title"] = "Create Board";
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                <input asp-for="IsPrivate" class="form-check-input" type="checkbox" />
+                                <label asp-for="IsPrivate" class="form-check-label">Private (Only you can see this
+                                    board)</label>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Create</button>
                             <a asp-action="Index" class="btn btn-secondary">Back to Boards</a>

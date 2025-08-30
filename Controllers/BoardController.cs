@@ -34,7 +34,7 @@ namespace PinterestClone.Controllers
             }
 
             var query = _context.Boards
-                .Where(b => b.UserId == userId.Value)
+                .Where(b => b.UserId == userId.Value && (!b.IsPrivate || b.UserId == userId.Value))
                 .Include(b => b.PinBoards)
                     .ThenInclude(pb => pb.Pin);
 

@@ -21,6 +21,12 @@ ViewData["Title"] = "Edit Board";
             <input asp-for="CoverImagePath" class="form-control" />
             <span asp-validation-for="CoverImagePath" class="text-danger"></span>
         </div>
+        <div class="form-group mb-3">
+            <div class="form-check">
+                <input asp-for="IsPrivate" class="form-check-input" type="checkbox" />
+                <label asp-for="IsPrivate" class="form-check-label">Private (Only you can see this board)</label>
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary">Save Changes</button>
         <a asp-action="Index" class="btn btn-secondary">Cancel</a>
     </form>
