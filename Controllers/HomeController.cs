@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using PinterestClone.Models;
+using PinterestClone.Data;
 
 namespace PinterestClone.Controllers;
 
@@ -8,14 +9,16 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger)
+    private readonly ApplicationDbContext _context;
+
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(string search, string filter)
     {
-    // If there is no session, read UserId and UserName from cookie
         if (HttpContext.Session.GetInt32("UserId") == null)
         {
             var userIdCookie = Request.Cookies["UserId"];
@@ -29,6 +32,24 @@ public class HomeController : Controller
                 }
             }
         }
+
+        var pins = new List<Pin>();
+        var users = new List<User>();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            if (string.IsNullOrEmpty(filter) || filter == "pins")
+            {
+                pins = _context.Pins.Where(p => p.Title.Contains(search) || (p.Description != null && p.Description.Contains(search))).ToList();
+            }
+            if (string.IsNullOrEmpty(filter) || filter == "accounts")
+            {
+                users = _context.Users.Where(u => u.Name.Contains(search) || u.Email.Contains(search)).ToList();
+            }
+        }
+        ViewBag.Pins = pins;
+        ViewBag.Users = users;
+        ViewBag.Search = search;
+        ViewBag.Filter = filter;
         return View();
     }
 

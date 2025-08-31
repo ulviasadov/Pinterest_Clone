@@ -2,6 +2,66 @@
 ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+<div class="container mt-4">
+    <div class="row mb-3">
+        <div class="col-md-8 offset-md-2">
+            <form method="get" class="d-flex">
+                <input type="text" name="search" class="form-control me-2" placeholder="Search pins or accounts..."
+                    value="@ViewBag.Search" />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+            <div class="mt-2">
+                <a href="?search=@(ViewBag.Search ?? "")&filter=pins"
+                    class="btn btn-outline-secondary @(ViewBag.Filter == " pins" ? "active" : "" )">Pins</a>
+                <a href="?search=@(ViewBag.Search ?? "")&filter=accounts"
+                    class="btn btn-outline-secondary @(ViewBag.Filter == " accounts" ? "active" : "" )">Accounts</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            @if (ViewBag.Filter == null || ViewBag.Filter == "pins")
+            {
+            <h4>Pins</h4>
+            <div class="row">
+                @foreach (var pin in (ViewBag.Pins as List<PinterestClone.Models.Pin>) ?? new List
+                    <PinterestClone.Models.Pin>())
+                        {
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img src="@pin.ImagePath" class="card-img-top" alt="@pin.Title"
+                                    style="height: 150px; object-fit: cover;" />
+                                <div class="card-body">
+                                    <h5 class="card-title">@pin.Title</h5>
+                                    @if (!string.IsNullOrEmpty(pin.Description))
+                                    {
+                                    <p class="card-text">@pin.Description</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        }
+            </div>
+            }
+            @if (ViewBag.Filter == null || ViewBag.Filter == "accounts")
+            {
+            <h4>Accounts</h4>
+            <ul class="list-group">
+                @foreach (var user in (ViewBag.Users as List<PinterestClone.Models.User>) ?? new List
+                    <PinterestClone.Models.User>())
+                        {
+                        var profileImage = string.IsNullOrWhiteSpace(user.ProfileImagePath)
+                        ? Url.Content("~/images/PP.jpg")
+                        : user.ProfileImagePath;
+
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="@profileImage" class="rounded-circle me-2"
+                                style="width:32px;height:32px;object-fit:cover;" />
+                            <a href="/User/Profile/@user.Id" class="ms-2 fw-bold text-decoration-none">@user.Name</a>
+                        </li>
+                        }
+            </ul>
+            }
+        </div>
+    </div>
 </div>
