@@ -15,18 +15,27 @@ namespace PinterestClone.Controllers
 
         [HttpPost]
         public IActionResult Follow(int userId)
+            if (!_context.Users.Any(u => u.Id == userId))
+            {
+                return BadRequest("User not found.");
+            }
         {
-            var currentUserId = 0;
-            if (currentUserId == userId) return BadRequest();
+            var currentUserId = HttpContext.Session.GetInt32("UserId");
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+            int currentId = (int)currentUserId;
+            if (currentId == userId) return BadRequest();
 
             var alreadyFollowing = _context.Follows
-                .Any(f => f.FollowerId == currentUserId && f.FollowingId == userId);
+                .Any(f => f.FollowerId == currentId && f.FollowingId == userId);
 
             if (!alreadyFollowing)
             {
                 _context.Follows.Add(new Follow
                 {
-                    FollowerId = currentUserId,
+                    FollowerId = currentId,
                     FollowingId = userId,
                     FollowedAt = DateTime.Now
                 });
@@ -38,9 +47,14 @@ namespace PinterestClone.Controllers
         [HttpPost]
         public IActionResult Unfollow(int userId)
         {
-            var currentUserId = 0;
+            var currentUserId = HttpContext.Session.GetInt32("UserId");
+            if (currentUserId == null)
+            {
+                return Unauthorized();
+            }
+            int currentId = (int)currentUserId;
             var follow = _context.Follows
-                .FirstOrDefault(f => f.FollowerId == currentUserId && f.FollowingId == userId);
+                .FirstOrDefault(f => f.FollowerId == currentId && f.FollowingId == userId);
             if (follow != null)
             {
                 _context.Follows.Remove(follow);
