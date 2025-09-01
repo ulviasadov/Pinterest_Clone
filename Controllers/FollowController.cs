@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PinterestClone.Data;
 using PinterestClone.Models;
 
@@ -6,30 +7,31 @@ namespace PinterestClone.Controllers
 {
     public class FollowController : Controller
     {
-    private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-    public FollowController(ApplicationDbContext context)
+        public FollowController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         [HttpPost]
-        public IActionResult Follow(int userId)
-            if (!_context.Users.Any(u => u.Id == userId))
-            {
-                return BadRequest("User not found.");
-            }
+        public async Task<IActionResult> Follow(int userId)
         {
+
             var currentUserId = HttpContext.Session.GetInt32("UserId");
             if (currentUserId == null)
             {
                 return Unauthorized();
             }
+
+            if (!await _context.Users.AnyAsync(u => u.Id == userId))
+                return BadRequest("User not found.");
+
             int currentId = (int)currentUserId;
             if (currentId == userId) return BadRequest();
 
-            var alreadyFollowing = _context.Follows
-                .Any(f => f.FollowerId == currentId && f.FollowingId == userId);
+            var alreadyFollowing = await _context.Follows
+                .AnyAsync(f => f.FollowerId == currentId && f.FollowingId == userId);
 
             if (!alreadyFollowing)
             {
@@ -39,51 +41,54 @@ namespace PinterestClone.Controllers
                     FollowingId = userId,
                     FollowedAt = DateTime.Now
                 });
-                _context.SaveChanges();
+
+                await _context.SaveChangesAsync();
             }
+
             return Ok();
         }
 
         [HttpPost]
-        public IActionResult Unfollow(int userId)
+        public async Task<IActionResult> Unfollow(int userId)
         {
             var currentUserId = HttpContext.Session.GetInt32("UserId");
             if (currentUserId == null)
             {
                 return Unauthorized();
             }
+
             int currentId = (int)currentUserId;
-            var follow = _context.Follows
-                .FirstOrDefault(f => f.FollowerId == currentId && f.FollowingId == userId);
+
+            var follow = await _context.Follows
+                .FirstOrDefaultAsync(f => f.FollowerId == currentId && f.FollowingId == userId);
+
             if (follow != null)
             {
                 _context.Follows.Remove(follow);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             return Ok();
         }
 
-        public IActionResult Followers(int userId)
+        public async Task<IActionResult> Followers(int userId)
         {
-            var followerIds = _context.Follows
+            var followers = await _context.Follows
+                .Include(f => f.Follower)
                 .Where(f => f.FollowingId == userId)
-                .Select(f => f.FollowerId)
-                .ToList();
-            var followers = _context.Users
-                .Where(u => followerIds.Contains(u.Id))
-                .ToList();
+                .Select(f => f.Follower)
+                .ToListAsync();
+
             return View(followers);
         }
 
-        public IActionResult Following(int userId)
+        public async Task<IActionResult> Following(int userId)
         {
-            var followingIds = _context.Follows
+            var following = await _context.Follows
+                .Include(f => f.Follower)
                 .Where(f => f.FollowerId == userId)
-                .Select(f => f.FollowingId)
-                .ToList();
-            var following = _context.Users
-                .Where(u => followingIds.Contains(u.Id))
-                .ToList();
+                .Select(f => f.Following)
+                .ToListAsync();
+
             return View(following);
         }
     }

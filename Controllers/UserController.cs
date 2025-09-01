@@ -3,38 +3,38 @@ using PinterestClone.Data;
 using PinterestClone.Models;
 using System.Security.Cryptography;
 using System.Text;
-using System.Linq;
 
 namespace PinterestClone.Controllers
 {
-        public class UserController : BaseController
-        {
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public IActionResult UpdateBio(string Bio)
-            {
-                var userId = HttpContext.Session.GetInt32("UserId");
-                if (userId == null)
-                {
-                    TempData["ErrorMessage"] = "Session not found. Please log in again.";
-                    return RedirectToAction("Login");
-                }
-                var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-                if (user == null)
-                {
-                    TempData["ErrorMessage"] = "User not found.";
-                    return RedirectToAction("Profile");
-                }
-                user.Bio = Bio;
-                _context.SaveChanges();
-                TempData["SuccessMessage"] = "Bio updated successfully.";
-                return RedirectToAction("Profile");
-            }
+    public class UserController : BaseController
+    {
         private readonly ApplicationDbContext _context;
 
         public UserController(ApplicationDbContext context)
         {
             _context = context;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateBio(string Bio)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                TempData["ErrorMessage"] = "Session not found. Please log in again.";
+                return RedirectToAction("Login");
+            }
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("Profile");
+            }
+            user.Bio = Bio;
+            _context.SaveChanges();
+            TempData["SuccessMessage"] = "Bio updated successfully.";
+            return RedirectToAction("Profile");
         }
 
         // GET: /User/Dashboard
@@ -60,8 +60,6 @@ namespace PinterestClone.Controllers
                 .ToList();
             return View();
         }
-    // ...existing code...
-// ...existing code...
 
         // GET: /User/Register
         [HttpGet]
@@ -422,53 +420,53 @@ namespace PinterestClone.Controllers
                 return Convert.ToBase64String(bytes);
             }
         }
-            [HttpPost]
-            [ValidateAntiForgeryToken]
-            public IActionResult UploadProfilePhoto(IFormFile profileImage)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UploadProfilePhoto(IFormFile profileImage)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
             {
-                var userId = HttpContext.Session.GetInt32("UserId");
-                if (userId == null)
-                {
-                    TempData["ErrorMessage"] = "Session not found. Please log in again.";
-                    return RedirectToAction("Login");
-                }
-                var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-                if (user == null)
-                {
-                    TempData["ErrorMessage"] = "User not found.";
-                    return RedirectToAction("Profile");
-                }
-                if (profileImage == null || profileImage.Length == 0)
-                {
-                    TempData["ErrorMessage"] = "Please select a photo.";
-                    return RedirectToAction("Profile");
-                }
-                try
-                {
-                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                    if (!Directory.Exists(uploadsFolder))
-                        Directory.CreateDirectory(uploadsFolder);
-                    var fileName = $"user_{user.Id}_{DateTime.Now.Ticks}{Path.GetExtension(profileImage.FileName)}";
-                    var filePath = Path.Combine(uploadsFolder, fileName);
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        profileImage.CopyTo(stream);
-                    }
-                    user.ProfileImagePath = $"/uploads/{fileName}";
-                    _context.SaveChanges();
-                    HttpContext.Session.SetString("ProfileImagePath", user.ProfileImagePath ?? "");
-                    Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath ?? "", new CookieOptions
-                    {
-                        Expires = DateTimeOffset.Now.AddDays(14),
-                        IsEssential = true
-                    });
-                    TempData["SuccessMessage"] = "Profile photo uploaded successfully.";
-                }
-                catch (Exception ex)
-                {
-                    TempData["ErrorMessage"] = $"Error uploading photo: {ex.Message}";
-                }
+                TempData["ErrorMessage"] = "Session not found. Please log in again.";
+                return RedirectToAction("Login");
+            }
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
                 return RedirectToAction("Profile");
             }
+            if (profileImage == null || profileImage.Length == 0)
+            {
+                TempData["ErrorMessage"] = "Please select a photo.";
+                return RedirectToAction("Profile");
+            }
+            try
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+                var fileName = $"user_{user.Id}_{DateTime.Now.Ticks}{Path.GetExtension(profileImage.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    profileImage.CopyTo(stream);
+                }
+                user.ProfileImagePath = $"/uploads/{fileName}";
+                _context.SaveChanges();
+                HttpContext.Session.SetString("ProfileImagePath", user.ProfileImagePath ?? "");
+                Response.Cookies.Append("ProfileImagePath", user.ProfileImagePath ?? "", new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddDays(14),
+                    IsEssential = true
+                });
+                TempData["SuccessMessage"] = "Profile photo uploaded successfully.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error uploading photo: {ex.Message}";
+            }
+            return RedirectToAction("Profile");
+        }
     }
 }

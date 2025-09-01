@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PinterestClone.Data;
 using PinterestClone.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace PinterestClone.Controllers
 {
@@ -23,11 +23,16 @@ namespace PinterestClone.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return RedirectToAction("Login", "User");
+
+            var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
+            if (pin == null) return NotFound();
+
             if (string.IsNullOrWhiteSpace(reason))
             {
                 TempData["ErrorMessage"] = "Please provide a reason.";
                 return RedirectToAction("Details", new { id = pinId });
             }
+
             var report = new PinReport
             {
                 PinId = pinId,
@@ -39,7 +44,7 @@ namespace PinterestClone.Controllers
             _context.SaveChanges();
             TempData["SuccessMessage"] = "Report submitted.";
             return RedirectToAction("Details", new { id = pinId });
-    }
+        }
 
         // POST: /Pin/Save
         [HttpPost]
@@ -49,6 +54,9 @@ namespace PinterestClone.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return RedirectToAction("Login", "User");
+
+            var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
+            if (pin == null) return NotFound();
 
             // Check if board belongs to user
             var board = _context.Boards.FirstOrDefault(b => b.Id == boardId && b.UserId == userId.Value);
@@ -66,7 +74,7 @@ namespace PinterestClone.Controllers
                 var pinCount = _context.PinBoards.Count(pb => pb.BoardId == boardId);
                 if (pinCount == 1)
                 {
-                    var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
+                    //var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
                     if (pin != null)
                     {
                         board.CoverImagePath = pin.ImagePath;
@@ -77,8 +85,6 @@ namespace PinterestClone.Controllers
             }
             return Json(new { success = false, message = "This pin already exists in this board." });
         }
-
-// ...existing code...
 
         // GET: /Pin
         public async Task<IActionResult> Index(string? query)
@@ -114,7 +120,7 @@ namespace PinterestClone.Controllers
         // POST: /Pin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([FromForm] Pin pin, [FromForm] IFormFile imageFile, [FromForm] int[] boardIds)
+        public async Task<IActionResult> Create([FromForm] Pin pin, [FromForm] IFormFile imageFile, [FromForm] int[] boardIds)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -201,11 +207,16 @@ namespace PinterestClone.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return RedirectToAction("Login", "User");
+
+            var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
+            if (pin == null) return NotFound();
+
             if (string.IsNullOrWhiteSpace(content))
             {
                 TempData["CommentError"] = "Comment can not be empty.";
                 return RedirectToAction("Details", new { id = pinId });
             }
+
             var comment = new PinComment
             {
                 PinId = pinId,
@@ -213,18 +224,22 @@ namespace PinterestClone.Controllers
                 Content = content,
                 CreatedAt = DateTime.UtcNow
             };
+
             _context.PinComments.Add(comment);
             _context.SaveChanges();
             return RedirectToAction("Details", new { id = pinId });
         }
 
-        // POST: /Pin/Like/5
+        // POST: /Pin/Like/id
         [HttpPost]
         public IActionResult Like(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return Json(new { success = false, message = "You must be logged in." });
+
+            var pin = _context.Pins.FirstOrDefault(p => p.Id == id);
+            if (pin == null) return NotFound();
 
             var alreadyLiked = _context.PinLikes.Any(pl => pl.PinId == id && pl.UserId == userId.Value);
             if (!alreadyLiked)
@@ -233,16 +248,20 @@ namespace PinterestClone.Controllers
                 _context.SaveChanges();
                 return Json(new { success = true });
             }
+
             return Json(new { success = false, message = "You have already liked this pin." });
         }
 
-        // POST: /Pin/Unlike/5
+        // POST: /Pin/Unlike/id
         [HttpPost]
         public IActionResult Unlike(int id)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
                 return Json(new { success = false, message = "You must be logged in." });
+
+            var pin = _context.Pins.FirstOrDefault(p => p.Id == id);
+            if (pin == null) return NotFound();
 
             var like = _context.PinLikes.FirstOrDefault(pl => pl.PinId == id && pl.UserId == userId.Value);
             if (like != null)
