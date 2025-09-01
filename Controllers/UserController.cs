@@ -275,6 +275,17 @@ namespace PinterestClone.Controllers
             ViewBag.PinCount = pins.Count;
             ViewBag.FollowersCount = followersCount;
             ViewBag.FollowingCount = followingCount;
+
+            var currentUserId = HttpContext.Session.GetInt32("UserId");
+            bool isFollowing = false;
+
+            if (currentUserId.HasValue)
+            {
+                isFollowing = _context.Follows.Any(f => f.FollowerId == currentUserId.Value && f.FollowingId == userId);
+            }
+
+            ViewBag.IsFollowing = isFollowing;
+
             return View(user);
         }
 

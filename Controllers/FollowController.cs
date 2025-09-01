@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PinterestClone.Data;
+using PinterestClone.DTOs;
 using PinterestClone.Models;
 
 namespace PinterestClone.Controllers
@@ -15,20 +16,19 @@ namespace PinterestClone.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Follow(int userId)
+        public async Task<IActionResult> Follow([FromBody] FollowRequest request)
         {
+            int userId = request.UserId;
 
             var currentUserId = HttpContext.Session.GetInt32("UserId");
             if (currentUserId == null)
-            {
                 return Unauthorized();
-            }
 
             if (!await _context.Users.AnyAsync(u => u.Id == userId))
                 return BadRequest("User not found.");
 
             int currentId = (int)currentUserId;
-            if (currentId == userId) return BadRequest();
+            if (currentId == userId) return BadRequest("nese");
 
             var alreadyFollowing = await _context.Follows
                 .AnyAsync(f => f.FollowerId == currentId && f.FollowingId == userId);
@@ -49,13 +49,13 @@ namespace PinterestClone.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Unfollow(int userId)
+        public async Task<IActionResult> Unfollow([FromBody] FollowRequest request)
         {
+            int userId = request.UserId;
+
             var currentUserId = HttpContext.Session.GetInt32("UserId");
             if (currentUserId == null)
-            {
                 return Unauthorized();
-            }
 
             int currentId = (int)currentUserId;
 

@@ -4716,11 +4716,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\Desktop\\Tasks\\CodeAcademy2\\PinterestClone\\PinterestClone.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\Desktop\\Tasks\\CodeAcademy2\\Pinterest_Clone\\PinterestClone.csproj",
       "projectName": "PinterestClone",
-      "projectPath": "C:\\Users\\HP\\Desktop\\Tasks\\CodeAcademy2\\PinterestClone\\PinterestClone.csproj",
+      "projectPath": "C:\\Users\\HP\\Desktop\\Tasks\\CodeAcademy2\\Pinterest_Clone\\PinterestClone.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\Desktop\\Tasks\\CodeAcademy2\\PinterestClone\\obj\\",
+      "outputPath": "C:\\Users\\HP\\Desktop\\Tasks\\CodeAcademy2\\Pinterest_Clone\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

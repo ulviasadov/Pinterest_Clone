@@ -17,109 +17,109 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = PinterestClone
 build_property.RootNamespace = PinterestClone
-build_property.ProjectDir = C:\Users\HP\Desktop\Tasks\CodeAcademy2\PinterestClone\
+build_property.ProjectDir = C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 9.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\HP\Desktop\Tasks\CodeAcademy2\PinterestClone
+build_property.MSBuildProjectDirectory = C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 9.0
 build_property.EnableCodeStyleSeverity = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Board/Create.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Board/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9hcmRcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Board/Edit.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Board/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9hcmRcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Board/Index.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Board/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQm9hcmRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Follow/Followers.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Follow/Followers.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9sbG93XEZvbGxvd2Vycy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Follow/Following.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Follow/Following.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRm9sbG93XEZvbGxvd2luZy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Home/Index.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Home/Privacy.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Pin/Create.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Pin/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGluXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Pin/Details.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Pin/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGluXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Pin/Explore.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Pin/Explore.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGluXEV4cGxvcmUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Pin/Index.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Pin/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGluXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Shared/Error.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Shared/_ProfilePhotoModal.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Shared/_ProfilePhotoModal.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Qcm9maWxlUGhvdG9Nb2RhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/User/AdminAddUser.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/AdminAddUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxBZG1pbkFkZFVzZXIuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/User/AdminEditUser.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/AdminEditUser.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxBZG1pbkVkaXRVc2VyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/User/AdminPanel.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/AdminPanel.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxBZG1pblBhbmVsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/User/Dashboard.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxEYXNoYm9hcmQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/User/Login.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/User/Profile.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/Profile.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxQcm9maWxlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/User/Register.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/_ViewImports.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/_ViewStart.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/PinterestClone/Views/Shared/_Layout.cshtml]
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-u3xssvst4n
