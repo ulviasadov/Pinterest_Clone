@@ -1,5 +1,6 @@
-using PinterestClone.Data;
 using Microsoft.EntityFrameworkCore;
+using PinterestClone.Data;
+using PinterestClone.Services;
 
 namespace PinterestClone
 {
@@ -26,6 +27,7 @@ namespace PinterestClone
 
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<UserInfoService>();
+            builder.Services.AddSingleton<EmailService>();
 
             var app = builder.Build();
 

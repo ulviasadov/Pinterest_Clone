@@ -466,3 +466,6 @@ C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\Pinteres
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\PinterestClone.genruntimeconfig.cache
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\ref\PinterestClone.dll
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\ytd0in8zaq-3r8b2a0bt1.gz
+C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\bin\Debug\net9.0\BouncyCastle.Cryptography.dll
+C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\bin\Debug\net9.0\MailKit.dll
+C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\bin\Debug\net9.0\MimeKit.dll
