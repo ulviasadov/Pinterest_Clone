@@ -1,80 +1,131 @@
-@{
-ViewData["Title"] = "Dashboard";
-var userCount = ViewBag.UserCount ?? 0;
-var pinCount = ViewBag.PinCount ?? 0;
-var boardCount = ViewBag.BoardCount ?? 0;
-var reportCount = ViewBag.ReportCount ?? 0;
-var topUsers = ViewBag.TopUsers as List<PinterestClone.Models.User>;
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    var userCount = ViewBag.UserCount ?? 0;
+    var pinCount = ViewBag.PinCount ?? 0;
+    var boardCount = ViewBag.BoardCount ?? 0;
+    var reportCount = ViewBag.ReportCount ?? 0;
+
+    var topUsers = ViewBag.TopUsers as List<PinterestClone.Models.User>;
     var topPins = ViewBag.TopPins as List<PinterestClone.Models.Pin>;
-        }
-        <div class="container mt-4">
-            <h2>Dashboard</h2>
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Users</h5>
-                            <p class="display-6">@userCount</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Pins</h5>
-                            <p class="display-6">@pinCount</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Boards</h5>
-                            <p class="display-6">@boardCount</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Reports</h5>
-                            <p class="display-6">@reportCount</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <h4>Top Active Users</h4>
-                    <ul class="list-group">
-                        @if (topUsers != null && topUsers.Any())
-                        {
-                        foreach (var user in topUsers)
-                        {
-                        <li class="list-group-item">@user.Name (@user.Email)</li>
-                        }
-                        }
-                        else
-                        {
-                        <li class="list-group-item">No data</li>
-                        }
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <h4>Most Reported Pins</h4>
-                    <ul class="list-group">
-                        @if (topPins != null && topPins.Any())
-                        {
-                        foreach (var pin in topPins)
-                        {
-                        <li class="list-group-item">@pin.Title (Id: @pin.Id)</li>
-                        }
-                        }
-                        else
-                        {
-                        <li class="list-group-item">No data</li>
-                        }
-                    </ul>
+    var topBoards = ViewBag.TopBoards as List<PinterestClone.Models.Board>; // Eğer ViewBag.TopBoards ekleyeceksen
+
+    var isAdmin = Context.Session.GetInt32("UserId") != null && ViewBag.IsAdmin == true;
+}
+
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="display-6">@userCount</p>
                 </div>
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Pins</h5>
+                    <p class="display-6">@pinCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Boards</h5>
+                    <p class="display-6">@boardCount</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Reports</h5>
+                    <p class="display-6">@reportCount</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <h4>Top Active Users</h4>
+            <ul class="list-group">
+                @if (topUsers != null && topUsers.Any())
+                {
+                    foreach (var user in topUsers)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @user.Name (@user.Email)
+                            @if (isAdmin)
+                            {
+                                <a class="btn btn-sm btn-danger" asp-controller="User" asp-action="DeleteUser" asp-route-id="@user.Id"
+                                   onclick="return confirm('Are you sure you want to delete this user?');">
+                                    Delete
+                                </a>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No data</li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-md-4">
+            <h4>Most Reported Pins</h4>
+            <ul class="list-group">
+                @if (topPins != null && topPins.Any())
+                {
+                    foreach (var pin in topPins)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @pin.Title (Id: @pin.Id)
+                            @if (isAdmin)
+                            {
+                                <a class="btn btn-sm btn-danger" asp-controller="User" asp-action="DeletePin" asp-route-id="@pin.Id"
+                                   onclick="return confirm('Are you sure you want to delete this pin?');">
+                                    Delete
+                                </a>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No data</li>
+                }
+            </ul>
+        </div>
+
+        <div class="col-md-4">
+            <h4>Boards</h4>
+            <ul class="list-group">
+                @if (topBoards != null && topBoards.Any())
+                {
+                    foreach (var board in topBoards)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            @board.Title (Id: @board.Id)
+                            @if (isAdmin)
+                            {
+                                <a class="btn btn-sm btn-danger" asp-controller="Board" asp-action="AdminDeleteBoard" asp-route-id="@board.Id"
+                                   onclick="return confirm('Are you sure you want to delete this board?');">
+                                    Delete
+                                </a>
+                            }
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item">No data</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

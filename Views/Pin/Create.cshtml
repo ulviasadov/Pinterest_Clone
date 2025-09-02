@@ -1,76 +1,78 @@
 @model PinterestClone.Models.Pin
 
 @{
-ViewData["Title"] = "Create Pin";
-var categories = new List<string> { "General", "Food", "Fashion", "Decoration", "Art", "Technology", "Travel" };
-    }
+    ViewData["Title"] = "Create Pin";
+    var categories = new List<string> { "General", "Food", "Fashion", "Decoration", "Art", "Technology", "Travel" };
+}
 
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Create New Pin</h2>
-                    </div>
-                    <div class="card-body">
-                        <form asp-action="Create" method="post" enctype="multipart/form-data">
-                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Create New Pin</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="Title" class="control-label">Title</label>
-                                <input asp-for="Title" class="form-control" placeholder="Enter pin title..." />
-                                <span asp-validation-for="Title" class="text-danger"></span>
-                            </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Title" class="control-label">Title</label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter pin title..." />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="Description" class="control-label">Description</label>
-                                <textarea asp-for="Description" class="form-control" rows="3"
-                                    placeholder="Enter pin description..."></textarea>
-                                <span asp-validation-for="Description" class="text-danger"></span>
-                            </div>
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="control-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"
+                                      placeholder="Enter pin description..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
 
-                            <div class="form-group mb-3">
-                                <label class="control-label">Boards (optional, multi-select)</label>
-                                <select class="form-control" name="boardIds" multiple size="4">
-                                    @if (ViewBag.Boards != null)
-                                    {
+                        <div class="form-group mb-3">
+                            <label class="control-label">Boards (optional, multi-select)</label>
+                            <select class="form-control" name="boardIds" multiple size="4">
+                                @if (ViewBag.Boards != null)
+                                {
                                     foreach (var b in (IEnumerable<PinterestClone.Models.Board>)ViewBag.Boards)
-                                        {
-                                        <option value="@b.Id">@b.Title</option>
-                                        }
-                                        }
-                                </select>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label class="control-label">Image</label>
-                                <input type="file" name="imageFile" class="form-control" accept="image/*" required />
-                                <small class="form-text text-muted">Select an image for your pin (JPG, PNG, GIF)</small>
-                            </div>
-
-                            <div class="form-group mb-3">
-                                <label asp-for="Category" class="control-label">Category</label>
-                                <select asp-for="Category" class="form-control" required>
-                                    <option value="">Select category</option>
-                                    @foreach (var cat in categories)
                                     {
-                                    <option value="@cat">@cat</option>
+                                        <option value="@b.Id">@b.Title</option>
                                     }
-                                </select>
-                                <span asp-validation-for="Category" class="text-danger"></span>
-                            </div>
+                                }
+                            </select>
+                        </div>
 
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Create Pin</button>
-                                <a asp-action="Index" class="btn btn-secondary">Back to Pins</a>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="form-group mb-3">
+                            <label class="control-label">Image</label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/*" required />
+                            <small class="form-text text-muted">Select an image for your pin (JPG, PNG, GIF)</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Category" class="control-label">Category</label>
+                            <select asp-for="Category" class="form-control" required>
+                                <option value="">Select category</option>
+                                @foreach (var cat in categories)
+                                {
+                                    <option value="@cat">@cat</option>
+                                }
+                            </select>
+                            <span asp-validation-for="Category" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Create Pin</button>
+                            <a asp-action="Index" class="btn btn-secondary">Back to Pins</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+}

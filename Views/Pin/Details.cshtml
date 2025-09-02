@@ -1,103 +1,161 @@
 @model PinterestClone.Models.Pin
 @{
-ViewData["Title"] = "Pin Details";
-var userId = Context.Session.GetInt32("UserId");
+    ViewData["Title"] = "Pin Details";
+    var userIdNullable = Context.Session.GetInt32("UserId");
 }
+
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card mb-4">
                 <img src="@Model.ImagePath" class="card-img-top" alt="@Model.Title"
-                    style="max-height:350px;object-fit:cover;">
+                     style="max-height:350px;object-fit:cover;">
                 <div class="card-body">
                     <h3 class="card-title">@Model.Title</h3>
                     @if (!string.IsNullOrEmpty(Model.Description))
                     {
-                    <p class="card-text">@Model.Description</p>
+                        <p class="card-text">@Model.Description</p>
                     }
                     <p class="text-muted">By @Model.User?.Name</p>
 
-                    @if (userId != null)
+                    @if (userIdNullable != null)
                     {
-                    var boards = ViewBag.Boards as List<PinterestClone.Models.Board>;
+                        int userId = userIdNullable.Value;
+
+                        // Toggle Like Butonu
+                        bool liked = Model.PinLikes?.Any(pl => pl.UserId == userId) ?? false;
+                        <div class="d-flex align-items-center mb-3">
+                            <button class="btn btn-link toggle-like-btn" data-id="@Model.Id" style="font-size:1.5rem; color:red; border:none; background:none;">
+                                <i class="@(liked ? "fas fa-heart" : "far fa-heart")"></i>
+                            </button>
+                            <span class="ms-2" id="like-count-@Model.Id">Likes: @(Model.PinLikes?.Count ?? 0)</span>
+                        </div>
+
+                        // Board'a Kaydetme Formu
+                        var boards = ViewBag.Boards as List<PinterestClone.Models.Board>;
                         if (boards != null && boards.Any())
                         {
-                        <form asp-action="Save" method="post" class="mt-3">
-                            <input type="hidden" name="pinId" value="@Model.Id" />
-                            <div class="input-group mb-2">
-                                <select name="boardId" class="form-select" required>
-                                    <option value="">Select board</option>
-                                    @foreach (var board in boards)
-                                    {
-                                    <option value="@board.Id">@board.Title</option>
-                                    }
-                                </select>
-                                <button type="submit" class="btn btn-success">Kaydet</button>
-                            </div>
-                        </form>
+                            <form asp-action="Save" method="post" class="mt-3">
+                                <input type="hidden" name="pinId" value="@Model.Id" />
+                                <div class="input-group mb-2">
+                                    <select name="boardId" class="form-select" required>
+                                        <option value="">Select board</option>
+                                        @foreach (var board in boards)
+                                        {
+                                            <option value="@board.Id">@board.Title</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </div>
+                            </form>
                         }
-                        <hr />
+                        else
+                        {
+                            <div class="alert alert-info">You must create a board before saving a pin.</div>
+                        }
+
+                        // Rapor Formu
                         <div class="mt-3">
                             <h5>Report this pin</h5>
                             <form asp-action="Report" method="post">
                                 <input type="hidden" name="pinId" value="@Model.Id" />
                                 <div class="mb-2">
                                     <textarea name="reason" class="form-control"
-                                        placeholder="Why are you reporting this pin?" required></textarea>
+                                          placeholder="Why are you reporting this pin?" required></textarea>
                                 </div>
                                 <button type="submit" class="btn btn-danger btn-sm">Report</button>
                             </form>
                         </div>
-                        }
-                        }
-                        else
-                        {
-                        <div class="alert alert-info">You must create a board before saving a pin.</div>
-                        }
-                </div>
-                <div class="mb-4">
-                    <h5>Comments (@Model.PinComments?.Count ?? 0)</h5>
-                    @if (Model.PinComments != null && Model.PinComments.Any())
-                    {
-                    <ul class="list-group mb-3">
-                        @foreach (var comment in Model.PinComments.OrderByDescending(c => c.CreatedAt))
-                        {
-                        <li class="list-group-item">
-                            <strong>@comment.User?.Name</strong> <span class="text-muted"
-                                style="font-size:0.9em">@comment.CreatedAt.ToLocalTime().ToString("g")</span>
-                            <div>@comment.Content</div>
-                        </li>
-                        }
-                    </ul>
                     }
                     else
                     {
-                    <p>No comments yet.</p>
+                        <div class="alert alert-info">Please <a href="/User/Login">login</a> to like, save, or comment.</div>
                     }
                 </div>
-                @if (userId != null)
-                {
-                <div class="mb-3">
-                    <h6>Add Comment</h6>
-                    @if (TempData["CommentError"] != null)
-                    {
-                    <div class="alert alert-danger">@TempData["CommentError"]</div>
-                    }
-                    <form asp-action="AddComment" method="post">
-                        <input type="hidden" name="pinId" value="@Model.Id" />
-                        <div class="mb-2">
-                            <textarea name="content" class="form-control" rows="3" placeholder="Write your comment..."
-                                required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit Comment</button>
-                    </form>
+
+                <!-- Comments -->
+                <div>
+                    <h5 class="ms-3">Comments @(Model.PinComments?.Count ?? 0)</h5>
+                    <div class="card p-3">
+                        @if (Model.PinComments != null && Model.PinComments.Any())
+                        {
+                            <ul class="list-group mb-3">
+                                @foreach (var comment in Model.PinComments.OrderByDescending(c => c.CreatedAt))
+                                {
+                                    <li class="list-group-item">
+                                        <strong>@comment.User?.Name</strong>
+                                        <span class="text-muted" style="font-size:0.9em">
+                                            @comment.CreatedAt.ToLocalTime().ToString("g")
+                                        </span>
+                                        <div>@comment.Content</div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p>No comments yet.</p>
+                        }
+
+                        <!-- Add Comment -->
+                        @if (userIdNullable != null)
+                        {
+                            <div class="mt-3">
+                                <h6>Add Comment</h6>
+                                @if (TempData["CommentError"] != null)
+                                {
+                                    <div class="alert alert-danger">@TempData["CommentError"]</div>
+                                }
+                                <form asp-action="AddComment" method="post">
+                                    <input type="hidden" name="pinId" value="@Model.Id" />
+                                    <div class="mb-2">
+                                        <textarea name="content" class="form-control" rows="3" placeholder="Write your comment..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Submit Comment</button>
+                                </form>
+                            </div>
+                        }
+
+                    </div>
+                        <a asp-action="Index" class="btn btn-secondary m-3">Back to All Pins</a>
                 </div>
-                }
-                else
-                {
-                <div class="alert alert-info">Please <a href="/User/Login">login</a> to comment.</div>
-                }
-                <a asp-action="Index" class="btn btn-secondary mt-3">Back to All Pins</a>
             </div>
         </div>
     </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            $(document).on('click', '.toggle-like-btn', function () {
+                var btn = $(this);
+                var pinId = btn.data('id');
+                var icon = btn.find('i');
+                var likeCountSpan = $('#like-count-' + pinId);
+
+                if (icon.hasClass('fas')) {
+                    $.post('/Pin/Unlike/' + pinId, function(res) {
+                        if (res.success) {
+                            icon.removeClass('fas').addClass('far');
+                            var count = parseInt(likeCountSpan.text().replace('Likes: ', '')) - 1;
+                            likeCountSpan.text('Likes: ' + count);
+                        } else {
+                            alert(res.message);
+                        }
+                    });
+                } else {
+                    $.post('/Pin/Like/' + pinId, function(res) {
+                        if (res.success) {
+                            icon.removeClass('far').addClass('fas');
+                            var count = parseInt(likeCountSpan.text().replace('Likes: ', '')) + 1;
+                            likeCountSpan.text('Likes: ' + count);
+                        } else {
+                            alert(res.message);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

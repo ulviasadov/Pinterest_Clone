@@ -58,6 +58,10 @@ namespace PinterestClone.Controllers
                 .OrderByDescending(p => _context.Set<PinReport>().Count(r => r.PinId == p.Id))
                 .Take(5)
                 .ToList();
+            ViewBag.TopBoards = _context.Boards
+                .OrderByDescending(b => b.PinBoards.Count)
+                .Take(5)
+                .ToList();
             return View();
         }
 
@@ -411,7 +415,7 @@ namespace PinterestClone.Controllers
             _context.SaveChanges();
             return RedirectToAction("AdminPanel");
         }
-
+        [HttpGet]
         private string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())

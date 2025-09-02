@@ -58,12 +58,13 @@ namespace PinterestClone.Controllers
             var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
             if (pin == null) return NotFound();
 
-            // Check if board belongs to user
             var board = _context.Boards.FirstOrDefault(b => b.Id == boardId && b.UserId == userId.Value);
             if (board == null)
-                return Json(new { success = false, message = "Invalid board." });
+            {
+                TempData["ErrorMessage"] = "Invalid board selected.";
+                return RedirectToAction("Details", new { id = pinId });
+            }
 
-            // Check if already saved
             var alreadySaved = _context.PinBoards.Any(pb => pb.PinId == pinId && pb.BoardId == boardId);
             if (!alreadySaved)
             {
@@ -74,16 +75,17 @@ namespace PinterestClone.Controllers
                 var pinCount = _context.PinBoards.Count(pb => pb.BoardId == boardId);
                 if (pinCount == 1)
                 {
-                    //var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
-                    if (pin != null)
-                    {
-                        board.CoverImagePath = pin.ImagePath;
-                        _context.SaveChanges();
-                    }
+                    board.CoverImagePath = pin.ImagePath;
+                    _context.SaveChanges();
                 }
-                return Json(new { success = true });
+                TempData["SuccessMessage"] = "Pin successfully saved to board!";
             }
-            return Json(new { success = false, message = "This pin already exists in this board." });
+            else
+            {
+                TempData["ErrorMessage"] = "This pin already exists in this board.";
+            }
+
+            return RedirectToAction("Details", new { id = pinId });
         }
 
         // GET: /Pin
@@ -107,13 +109,9 @@ namespace PinterestClone.Controllers
         public IActionResult Create()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
-            {
-                return RedirectToAction("Login", "User");
-            }
+            if (userId == null) return RedirectToAction("Login", "User");
 
-            var boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
-            ViewBag.Boards = boards;
+            ViewBag.Boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
             return View();
         }
 
@@ -123,58 +121,65 @@ namespace PinterestClone.Controllers
         public async Task<IActionResult> Create([FromForm] Pin pin, [FromForm] IFormFile imageFile, [FromForm] int[] boardIds)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null)
+            if (userId == null) return RedirectToAction("Login", "User");
+
+            if (!ModelState.IsValid)
             {
-                return RedirectToAction("Login", "User");
+                foreach (var e in ModelState.Values.SelectMany(v => v.Errors))
+                    System.Diagnostics.Debug.WriteLine($"Validation Error: {e.ErrorMessage}");
+                ViewBag.Boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
+                return View(pin);
             }
 
-
-            if (ModelState.IsValid)
+            if (imageFile == null || imageFile.Length == 0)
             {
-                if (imageFile != null && imageFile.Length > 0)
+                ModelState.AddModelError("ImagePath", "You must select an image.");
+                ViewBag.Boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
+                return View(pin);
+            }
+
+            try
+            {
+                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(imageFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads");
-                    if (!Directory.Exists(uploadsFolder))
-                    {
-                        Directory.CreateDirectory(uploadsFolder);
-                    }
-
-                    var sanitizedFileName = Path.GetFileName(imageFile.FileName);
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + sanitizedFileName;
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await imageFile.CopyToAsync(fileStream);
-                    }
-
-                    pin.ImagePath = "/uploads/" + uniqueFileName;
+                    await imageFile.CopyToAsync(fileStream);
                 }
 
+                pin.ImagePath = "/uploads/" + uniqueFileName;
                 pin.UserId = userId.Value;
+
                 _context.Pins.Add(pin);
                 await _context.SaveChangesAsync();
 
-                if (boardIds.Length > 0)
+                // Board ile ilişkilendir
+                if (boardIds != null && boardIds.Length > 0)
                 {
                     foreach (var boardId in boardIds)
                     {
-                        var exists = _context.PinBoards.Any(pb => pb.PinId == pin.Id && pb.BoardId == boardId);
-                        if (!exists)
+                        if (!_context.PinBoards.Any(pb => pb.PinId == pin.Id && pb.BoardId == boardId))
                         {
-                            var pinBoard = new PinBoard { PinId = pin.Id, BoardId = boardId };
-                            _context.PinBoards.Add(pinBoard);
+                            _context.PinBoards.Add(new PinBoard { PinId = pin.Id, BoardId = boardId });
                         }
                     }
                     await _context.SaveChangesAsync();
                 }
 
+                TempData["SuccessMessage"] = "Pin created successfully!";
                 return RedirectToAction(nameof(Index));
             }
-
-            var boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
-            ViewBag.Boards = boards;
-            return View(pin);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error creating pin: {ex.Message}");
+                ViewBag.Boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
+                return View(pin);
+            }
         }
 
         public IActionResult Details(int id)

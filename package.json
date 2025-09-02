@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "sass": "sass wwwroot/scss:wwwroot/css --no-source-map"
+  },
+  "devDependencies": {
+    "sass": "^1.91.0"
+  }
+}

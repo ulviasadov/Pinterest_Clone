@@ -14,7 +14,6 @@ namespace PinterestClone.Models
         [Required]
         public string Category { get; set; } = "Genel";
 
-        [Required]
         public string ImagePath { get; set; } = string.Empty;
 
         public int UserId { get; set; }
