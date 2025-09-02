@@ -79,7 +79,7 @@
                                         .catch(err => console.error("Fetch error:", err));
                                 });
                             }
-                            
+
 
                             if (unfollowBtn) {
                                 unfollowBtn.addEventListener('click', function (e) {
@@ -184,7 +184,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="bioModalLabel">
-                                @string.IsNullOrWhiteSpace(Model.Bio) ? "Add Bio" : "Edit Bio";
+                                @(string.IsNullOrEmpty(Model.Bio) ? "Add Bio" : "Edit Bio")
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
@@ -239,8 +239,7 @@
         @if (ViewContext.HttpContext.Session.GetInt32("UserId") == Model.Id)
         {
             <button class="btn btn-outline-info mb-2" data-bs-toggle="modal" data-bs-target="#bioModal">
-                Edit
-                Bio
+                @(string.IsNullOrEmpty(Model.Bio) ? "Add Bio" : "Edit Bio")
             </button>
         }
         <h4>Your Boards</h4>
