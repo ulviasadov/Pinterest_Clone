@@ -28,7 +28,7 @@ namespace PinterestClone.Controllers
                 return BadRequest("User not found.");
 
             int currentId = (int)currentUserId;
-            if (currentId == userId) return BadRequest("nese");
+            if (currentId == userId) return BadRequest();
 
             var alreadyFollowing = await _context.Follows
                 .AnyAsync(f => f.FollowerId == currentId && f.FollowingId == userId);

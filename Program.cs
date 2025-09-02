@@ -24,6 +24,9 @@ namespace PinterestClone
                 options.Cookie.IsEssential = true;
             });
 
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<UserInfoService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@inject UserInfoService UserInfoService
+@{
+    var currentUserId = Context.Session.GetInt32("UserId");
+    var (isAdmin, userName, profileImagePath) = UserInfoService.GetUserInfo();
+}
+
+
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -22,12 +30,11 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav me-auto">
-                        @if (Context.Session.GetInt32("UserId") != null)
+                        @if (isAdmin)
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="User"
-                                asp-action="Dashboard">Dashboard</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="User" asp-action="Dashboard">Dashboard</a>
+                            </li>
                         }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
@@ -54,7 +61,13 @@
                                 asp-action="Logout">Logout</a>
                         </li>
                         <li class="nav-item d-flex align-items-center">
-                            <a class="nav-link" asp-controller="User" asp-action="Profile">My Profile</a>
+                                @if (currentUserId.HasValue)
+                                {
+                                    <a class="nav-link" asp-controller="User" asp-action="Profile" asp-route-id="@currentUserId.Value">
+                                        My Profile
+                                    </a>
+                                }
+
                             @{
                             var profileImage = Context.Session.GetString("ProfileImagePath");
                             var defaultProfileImage = Url.Content("~/images/PP.jpg");
