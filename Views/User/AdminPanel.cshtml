@@ -1,144 +1,144 @@
 @{
-ViewData["Title"] = "Admin Panel";
-var users = ViewBag.Users as List<PinterestClone.Models.User>;
-    var pins = ViewBag.Pins as List<PinterestClone.Models.Pin>;
-        var boards = ViewBag.Boards as List<PinterestClone.Models.Board>;
+    ViewData["Title"] = "Admin Panel";
+    var users = ViewBag.Users as List<PinterestClone.Models.User> ?? new List<PinterestClone.Models.User>();
+    var pins = ViewBag.Pins as List<PinterestClone.Models.Pin> ?? new List<PinterestClone.Models.Pin>();
+    var boards = ViewBag.Boards as List<PinterestClone.Models.Board> ?? new List<PinterestClone.Models.Board>();
+}
+<div class="container mt-4">
+    <h2>Admin Panel</h2>
+    <div class="alert alert-info text-center mb-4">
+        Welcome to Admin Panel!
+    </div>
+    <hr />
+    <div class="mb-3">
+        <a asp-action="AdminAddUser" class="btn btn-success">Add New User</a>
+        <form method="get" asp-action="AdminPanel" class="d-inline-block ms-3">
+            <input type="text" name="userSearch" placeholder="Search user..."
+                   class="form-control d-inline-block w-auto" style="display:inline-block;width:200px;" />
+            <button type="submit" class="btn btn-outline-primary btn-sm">Search</button>
+        </form>
+    </div>
+    <h4>Users</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Admin</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>@(user.IsAdmin ? "Yes" : "No")</td>
+                    <td>
+                        @if (!user.IsAdmin)
+                        {
+                            <a asp-action="AdminEditUser" asp-route-id="@user.Id"
+                               class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="DeleteUser" asp-route-id="@user.Id"
+                               class="btn btn-danger btn-sm">Delete</a>
+                        }
+                    </td>
+                </tr>
             }
-            <div class="container mt-4">
-                <h2>Admin Panel</h2>
-                <div class="alert alert-info text-center mb-4">
-                    Welcome to Admin Panel!
-                </div>
-                <hr />
-                <div class="mb-3">
-                    <a asp-action="AdminAddUser" class="btn btn-success">Add New User</a>
-                    <form method="get" asp-action="AdminPanel" class="d-inline-block ms-3">
-                        <input type="text" name="userSearch" placeholder="Search user..."
-                            class="form-control d-inline-block w-auto" style="display:inline-block;width:200px;" />
-                        <button type="submit" class="btn btn-outline-primary btn-sm">Search</button>
-                    </form>
-                </div>
-                <h4>Users</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Admin</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in users)
-                        {
-                        <tr>
-                            <td>@user.Id</td>
-                            <td>@user.Name</td>
-                            <td>@user.Email</td>
-                            <td>@(user.IsAdmin ? "Yes" : "No")</td>
-                            <td>
-                                @if (!user.IsAdmin)
-                                {
-                                <a asp-action="AdminEditUser" asp-route-id="@user.Id"
-                                    class="btn btn-warning btn-sm">Edit</a>
-                                <a asp-action="DeleteUser" asp-route-id="@user.Id"
-                                    class="btn btn-danger btn-sm">Delete</a>
-                                }
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-                <h4>Pins</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Title</th>
-                            <th>Owner Id</th>
-                            <th>Owner</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var pin in pins)
-                        {
-                        <tr>
-                            <td>@pin.Id</td>
-                            <td>@pin.Title</td>
-                            <td>@pin.UserId</td>
-                            <td>@(users?.FirstOrDefault(u => u.Id == pin.UserId)?.Name ?? "Unknown")</td>
-                            <td>
-                                <a asp-action="DeletePin" asp-route-id="@pin.Id"
-                                    class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-                <h4>Boards</h4>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Id</th>
-                            <th>Title</th>
-                            <th>Owner Id</th>
-                            <th>Owner</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var board in boards)
-                        {
-                        <tr>
-                            <td>@board.Id</td>
-                            <td>@board.Title</td>
-                            <td>@board.UserId</td>
-                            <td>@(users?.FirstOrDefault(u => u.Id == board.UserId)?.Name ?? "Unknown")</td>
-                            <td>
-                                <a asp-action="DeleteBoard" asp-route-id="@board.Id"
-                                    class="btn btn-danger btn-sm">Delete</a>
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-                <h4>Reported Pins</h4>
-                @if (ViewBag.ReportedPins != null && ((List<PinterestClone.Models.PinReport>
-                    )ViewBag.ReportedPins).Any())
-                    {
-                    var reportedPins = (List<PinterestClone.Models.PinReport>)ViewBag.ReportedPins;
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Report Id</th>
-                                    <th>Pin Id</th>
-                                    <th>Pin Title</th>
-                                    <th>Reported By</th>
-                                    <th>Reason</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var report in reportedPins)
-                                {
-                                var pin = pins?.FirstOrDefault(p => p.Id == report.PinId);
-                                var user = users?.FirstOrDefault(u => u.Id == report.UserId);
-                                <tr>
-                                    <td>@report.Id</td>
-                                    <td>@report.PinId</td>
-                                    <td>@(pin?.Title ?? "Unknown")</td>
-                                    <td>@(user?.Name ?? "Unknown")</td>
-                                    <td>@report.Reason</td>
-                                    <td>@report.ReportedAt.ToString("g")</td>
-                                </tr>
-                                }
-                            </tbody>
-                        </table>
-                        }
-                        else
-                        {
-                        <div class="alert alert-success">No reported pins.</div>
-                        }
-            </div>
+        </tbody>
+    </table>
+    <h4>Pins</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Owner Id</th>
+                <th>Owner</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pin in pins)
+            {
+                <tr>
+                    <td>@pin.Id</td>
+                    <td>@pin.Title</td>
+                    <td>@pin.UserId</td>
+                    <td>@(users?.FirstOrDefault(u => u.Id == pin.UserId)?.Name ?? "Unknown")</td>
+                    <td>
+                        <a asp-action="DeletePin" asp-route-id="@pin.Id"
+                           class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h4>Boards</h4>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Owner Id</th>
+                <th>Owner</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var board in boards)
+            {
+                <tr>
+                    <td>@board.Id</td>
+                    <td>@board.Title</td>
+                    <td>@board.UserId</td>
+                    <td>@(users?.FirstOrDefault(u => u.Id == board.UserId)?.Name ?? "Unknown")</td>
+                    <td>
+                        <a asp-action="DeleteBoard" asp-route-id="@board.Id"
+                           class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <h4>Reported Pins</h4>
+    @if (ViewBag.ReportedPins != null && ((List<PinterestClone.Models.PinReport>
+        )ViewBag.ReportedPins).Any())
+    {
+        var reportedPins = (List<PinterestClone.Models.PinReport>)ViewBag.ReportedPins;
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Report Id</th>
+                    <th>Pin Id</th>
+                    <th>Pin Title</th>
+                    <th>Reported By</th>
+                    <th>Reason</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in reportedPins)
+                {
+                    var pin = pins?.FirstOrDefault(p => p.Id == report.PinId);
+                    var user = users?.FirstOrDefault(u => u.Id == report.UserId);
+                    <tr>
+                        <td>@report.Id</td>
+                        <td>@report.PinId</td>
+                        <td>@(pin?.Title ?? "Unknown")</td>
+                        <td>@(user?.Name ?? "Unknown")</td>
+                        <td>@report.Reason</td>
+                        <td>@report.ReportedAt.ToString("g")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-success">No reported pins.</div>
+    }
+</div>

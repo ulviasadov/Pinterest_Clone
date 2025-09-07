@@ -1,0 +1,48 @@
+﻿@{
+    var userId = ViewBag.UserId as int?;
+    var userName = ViewBag.UserName as string;
+    var isAdmin = (bool)ViewBag.IsAdmin;
+    var profileImage = ViewBag.ProfileImagePath as string;
+}
+
+<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">Pinterest</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
+                    </li>
+                }
+                <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Pin" asp-action="Index">Pins</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Board" asp-action="Index">Boards</a></li>
+                <li class="nav-item"><a class="nav-link" asp-controller="Pin" asp-action="Explore">Explore</a></li>
+            </ul>
+
+            <ul class="navbar-nav">
+                @if (userId.HasValue)
+                {
+                    <li class="nav-item d-flex align-items-center">
+
+                        <span class="nav-link">Welcome, <img src="@profileImage" alt="Profile" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:5px;" />@userName!</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="User" asp-action="Logout">Logout</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="Login">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="Register">Register</a></li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -21,7 +21,7 @@ var popularPins = ViewBag.PopularPins as List<Pin>;
                             <div class="card-body">
                                 <h5 class="card-title">@pin.Title</h5>
                                 <p class="card-text">@pin.User?.Name</p>
-                                <span class="badge bg-primary">Likes: @pin.PinLikes?.Count ?? 0</span>
+                                <span class="badge bg-primary">Likes: @(pin.PinLikes?.Count ?? 0)</span>
                                 <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Details</a>
                             </div>
                         </div>
@@ -46,6 +46,7 @@ var popularPins = ViewBag.PopularPins as List<Pin>;
                             <div class="card-body">
                                 <h5 class="card-title">@pin.Title</h5>
                                 <p class="card-text">@pin.User?.Name</p>
+                                <span class="badge bg-primary">Likes: @(pin.PinLikes?.Count ?? 0)</span>
                                 <a asp-action="Details" asp-route-id="@pin.Id" class="btn btn-link p-0">Details</a>
                             </div>
                         </div>

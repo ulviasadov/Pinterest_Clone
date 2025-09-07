@@ -124,14 +124,66 @@ namespace PinterestClone.Controllers
 
         #region Profile & Bio
 
-        [HttpGet]
+        // GET: /User/Profile/{id?}
         public IActionResult Profile(int? id)
         {
-            int userId = id ?? HttpContext.Session.GetInt32("UserId") ?? -1;
-            if (userId == -1) return RedirectToAction("Login");
-
+            RestoreSessionFromCookies();
+            int userId;
+            if (id.HasValue)
+            {
+                userId = id.Value;
+            }
+            else
+            {
+                var sessionUserId = HttpContext.Session.GetInt32("UserId");
+                if (sessionUserId == null)
+                {
+                    // Try to restore session from cookies
+                    var cookieUserId = Request.Cookies["UserId"];
+                    var cookieUserName = Request.Cookies["UserName"];
+                    if (!string.IsNullOrEmpty(cookieUserId) && int.TryParse(cookieUserId, out int parsedUserId))
+                    {
+                        HttpContext.Session.SetInt32("UserId", parsedUserId);
+                        if (!string.IsNullOrEmpty(cookieUserName))
+                            HttpContext.Session.SetString("UserName", cookieUserName);
+                        userId = parsedUserId;
+                    }
+                    else
+                    {
+                        return RedirectToAction("Login");
+                    }
+                }
+                else
+                {
+                    userId = sessionUserId.Value;
+                }
+            }
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null) return NotFound();
+            if (user == null)
+                return NotFound();
+            var pins = _context.Pins.Where(p => p.UserId == userId).OrderByDescending(p => p.Id).ToList();
+            var boards = _context.Boards.Where(b => b.UserId == userId && (!b.IsPrivate || userId == HttpContext.Session.GetInt32("UserId"))).OrderByDescending(b => b.Id).ToList();
+            var followersList = _context.Follows.Where(f => f.FollowingId == userId).Select(f => f.Follower).ToList();
+            var followingList = _context.Follows.Where(f => f.FollowerId == userId).Select(f => f.Following).ToList();
+            ViewBag.FollowersList = followersList;
+            ViewBag.FollowingList = followingList;
+            var followersCount = _context.Follows.Count(f => f.FollowingId == userId);
+            var followingCount = _context.Follows.Count(f => f.FollowerId == userId);
+            ViewBag.Pins = pins;
+            ViewBag.Boards = boards;
+            ViewBag.PinCount = pins.Count;
+            ViewBag.FollowersCount = followersCount;
+            ViewBag.FollowingCount = followingCount;
+
+            var currentUserId = HttpContext.Session.GetInt32("UserId");
+            bool isFollowing = false;
+
+            if (currentUserId.HasValue)
+            {
+                isFollowing = _context.Follows.Any(f => f.FollowerId == currentUserId.Value && f.FollowingId == userId);
+            }
+
+            ViewBag.IsFollowing = isFollowing;
 
             return View(user);
         }
@@ -177,6 +229,31 @@ namespace PinterestClone.Controllers
                 }
 
                 user.ProfileImagePath = $"/uploads/{fileName}";
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Profile");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveProfilePhoto()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null) return NotFound();
+
+            if (!string.IsNullOrEmpty(user.ProfileImagePath))
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfileImagePath.TrimStart('/'));
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+
+                user.ProfileImagePath = null;
                 _context.SaveChanges();
             }
 
@@ -253,6 +330,145 @@ namespace PinterestClone.Controllers
             using var sha256 = SHA256.Create();
             var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
             return Convert.ToBase64String(bytes);
+        }
+
+        // GET: /User/AdminPanel
+        public IActionResult AdminPanel(string? userSearch)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login");
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null || !user.IsAdmin)
+                return Unauthorized();
+            var users = _context.Users.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(userSearch))
+            {
+                users = users.Where(u => u.Name.Contains(userSearch) || u.Email.Contains(userSearch));
+            }
+            ViewBag.Users = users.ToList();
+            ViewBag.Pins = _context.Pins.ToList();
+            ViewBag.Boards = _context.Boards.ToList();
+            ViewBag.ReportedPins = _context.Set<PinReport>().ToList();
+            return View();
+        }
+
+        // GET: /User/AdminAddUser
+        public IActionResult AdminAddUser()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            return View();
+        }
+
+        // POST: /User/AdminAddUser
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AdminAddUser(User user, bool isAdmin)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (_context.Users.Any(u => u.Email == user.Email))
+            {
+                ModelState.AddModelError("Email", "This email address is already in use.");
+                return View(user);
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(user);
+            }
+            user.PasswordHash = HashPassword(user.Password);
+            user.Password = string.Empty;
+            user.IsAdmin = isAdmin;
+            _context.Users.Add(user);
+            _context.SaveChanges();
+            return RedirectToAction("AdminPanel");
+        }
+
+        // GET: /User/AdminEditUser/5
+        public IActionResult AdminEditUser(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null) return NotFound();
+            return View(user);
+        }
+
+        // POST: /User/AdminEditUser/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AdminEditUser(int id, string name, string email, bool isAdmin)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null) return NotFound();
+            if (_context.Users.Any(u => u.Email == email && u.Id != id))
+            {
+                ModelState.AddModelError("Email", "This email address is already in use.");
+                return View(user);
+            }
+            user.Name = name;
+            user.Email = email;
+            user.IsAdmin = isAdmin;
+            _context.SaveChanges();
+            return RedirectToAction("AdminPanel");
+        }
+
+        [HttpGet]
+        public IActionResult DeleteUser(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            var user = _context.Users.FirstOrDefault(u => u.Id == id);
+            if (user == null || user.IsAdmin) return NotFound();
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+            return RedirectToAction("AdminPanel");
+        }
+
+        [HttpGet]
+        public IActionResult DeletePin(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            var pin = _context.Pins.FirstOrDefault(p => p.Id == id);
+            if (pin == null) return NotFound();
+            _context.Pins.Remove(pin);
+            _context.SaveChanges();
+            return RedirectToAction("AdminPanel");
+        }
+
+        [HttpGet]
+        public IActionResult DeleteBoard(int id)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            var board = _context.Boards.FirstOrDefault(b => b.Id == id);
+            if (board == null) return NotFound();
+            _context.Boards.Remove(board);
+            _context.SaveChanges();
+            return RedirectToAction("AdminPanel");
+        }
+
+        public IActionResult Dashboard()
+        {
+            return View();
         }
     }
 }

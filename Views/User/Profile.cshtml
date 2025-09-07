@@ -23,16 +23,14 @@
                         <div class="d-flex flex-column justify-content-center">
                             <h2 class="card-title mb-1">@Model.Name</h2>
                             <div class="mb-0">
-                                <span class="me-3">Pins: @ViewBag.PinCount</span>
+                                <span class="me-3">Pins: @(ViewBag.PinCount ?? 0)</span>
                                 <span class="me-3" style="cursor:pointer;" data-bs-toggle="modal"
                                       data-bs-target="#followersModal">
-                                    Followers:
-                                    @ViewBag.FollowersCount
+                                    Followers: @(ViewBag.FollowersCount ?? 0)
                                 </span>
                                 <span style="cursor:pointer;" data-bs-toggle="modal"
                                       data-bs-target="#followingModal">
-                                    Following:
-                                    @ViewBag.FollowingCount
+                                    Following: @(ViewBag.FollowingCount ?? 0)
                                 </span>
                             </div>
                         </div>
@@ -218,18 +216,21 @@
             <div class="modal-body text-center">
                 <img src="@showImage" alt="Profile Photo" class="img-thumbnail mb-2 rounded-circle"
                      style="max-width:180px;max-height:180px;object-fit:cover;" />
-                @if (!string.IsNullOrWhiteSpace(Model.ProfileImagePath))
+                @if (ViewContext.HttpContext.Session.GetInt32("UserId") == Model.Id)
                 {
-                    <form asp-action="RemoveProfilePhoto" method="post" class="mb-3">
-                        <button type="submit" class="btn btn-danger">Remove Photo</button>
+                    @if (!string.IsNullOrWhiteSpace(Model.ProfileImagePath))
+                    {
+                        <form asp-action="RemoveProfilePhoto" method="post" class="mb-3">
+                            <button type="submit" class="btn btn-danger">Remove Photo</button>
+                        </form>
+                    }
+                    <form asp-action="UploadProfilePhoto" method="post" enctype="multipart/form-data">
+                        <div class="form-group mb-2">
+                            <input type="file" name="profileImage" class="form-control" accept="image/*" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Upload New Photo</button>
                     </form>
                 }
-                <form asp-action="UploadProfilePhoto" method="post" enctype="multipart/form-data">
-                    <div class="form-group mb-2">
-                        <input type="file" name="profileImage" class="form-control" accept="image/*" />
-                    </div>
-                    <button type="submit" class="btn btn-primary">Upload New Photo</button>
-                </form>
             </div>
         </div>
     </div>
