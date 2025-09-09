@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PinterestClone.Data;
 using PinterestClone.Models;
 using PinterestClone.Services;
@@ -408,19 +409,24 @@ namespace PinterestClone.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
-            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (admin == null || !admin.IsAdmin) return Unauthorized();
+
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null) return NotFound();
+
             if (_context.Users.Any(u => u.Email == email && u.Id != id))
             {
                 ModelState.AddModelError("Email", "This email address is already in use.");
                 return View(user);
             }
+
             user.Name = name;
             user.Email = email;
             user.IsAdmin = isAdmin;
             _context.SaveChanges();
+
             return RedirectToAction("AdminPanel");
         }
 
@@ -429,12 +435,38 @@ namespace PinterestClone.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
-            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (admin == null || !admin.IsAdmin) return Unauthorized();
+
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
             if (user == null || user.IsAdmin) return NotFound();
+
+            var follows = _context.Follows.Where(f => f.FollowerId == id || f.FollowingId == id).ToList();
+
+            _context.Follows.RemoveRange(follows);
+
+            var boards = _context.Boards.Where(b => b.UserId == id).ToList();
+            foreach(var b in boards)
+            {
+                var pinBoards = _context.PinBoards.Where(pb => pb.BoardId == b.Id).ToList();
+                _context.PinBoards.RemoveRange(pinBoards);
+            };
+
+            _context.Boards.RemoveRange(boards);
+
+            var pins = _context.Pins.Where(p => p.UserId == id).ToList();
+            foreach(var pin in pins)
+            {
+                var pinBoards = _context.PinBoards.Where(pb => pb.PinId == pin.Id).ToList();
+                _context.PinBoards.RemoveRange(pinBoards);
+            }
+
+            _context.Pins.RemoveRange(pins);
+
             _context.Users.Remove(user);
             _context.SaveChanges();
+
             return RedirectToAction("AdminPanel");
         }
 
@@ -443,12 +475,17 @@ namespace PinterestClone.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
-            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (admin == null || !admin.IsAdmin) return Unauthorized();
-            var pin = _context.Pins.FirstOrDefault(p => p.Id == id);
+
+            var pin = _context.Pins.Include(p => p.PinComments).FirstOrDefault(p => p.Id == id);
             if (pin == null) return NotFound();
+
+            _context.PinComments.RemoveRange(pin.PinComments);
             _context.Pins.Remove(pin);
             _context.SaveChanges();
+
             return RedirectToAction("AdminPanel");
         }
 
@@ -457,12 +494,17 @@ namespace PinterestClone.Controllers
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
-            var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+
+            var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (admin == null || !admin.IsAdmin) return Unauthorized();
-            var board = _context.Boards.FirstOrDefault(b => b.Id == id);
+
+            var board = _context.Boards.Include(b => b.PinBoards).FirstOrDefault(b => b.Id == id);
             if (board == null) return NotFound();
+
+            _context.PinBoards.RemoveRange(board.PinBoards);
             _context.Boards.Remove(board);
             _context.SaveChanges();
+
             return RedirectToAction("AdminPanel");
         }
 
