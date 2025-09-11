@@ -7,7 +7,7 @@
 
 <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container-fluid">
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index">Pinterest</a>
+        <span class="me-3 fw-medium">SnapNest</span>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -29,13 +29,9 @@
             <ul class="navbar-nav">
                 @if (userId.HasValue)
                 {
-                    <li class="nav-item d-flex align-items-center">
-
-                        <span class="nav-link">Welcome, <img src="@profileImage" alt="Profile" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:5px;" />@userName!</span>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="User" asp-action="Logout">Logout</a>
-                    </li>
+                    @* <li class="nav-item d-flex align-items-center"><span class="nav-link">Welcome, @userName!</span></li> *@
+                    <li><a class="nav-link" asp-controller="User" asp-action="Profile">Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="Logout">Logout</a></li>
                 }
                 else
                 {

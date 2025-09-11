@@ -261,6 +261,22 @@ namespace PinterestClone.Controllers
             return RedirectToAction("Profile");
         }
 
+        [HttpPost]
+        public IActionResult EditUsername(string newUsername)
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null) return NotFound();
+
+            user.Name = newUsername;
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Profile");
+        }
+
         #endregion
 
         #region Forgot / Reset Password
@@ -506,6 +522,20 @@ namespace PinterestClone.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("AdminPanel");
+        }
+
+        [HttpPost]
+        public IActionResult EditBoard(Board board)          //*******************************************************************************
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null) return RedirectToAction("Login");
+
+            var boardUserId = _context.Boards.FirstOrDefault(b => b.UserId == userId);
+            if (boardUserId == null) return NotFound();
+
+            
+
+            return RedirectToAction("Profile");
         }
 
         public IActionResult Dashboard()

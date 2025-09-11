@@ -18,7 +18,7 @@ ViewData["Title"] = "Boards";
                 @if (!string.IsNullOrWhiteSpace(board.CoverImagePath))
                 {
                 <img src="@board.CoverImagePath" alt="Board Cover" class="img-fluid mb-2"
-                    style="max-height: 180px; object-fit: cover; width: 100%;" />
+                    style="height: 250px; object-fit: cover; width: 100%;" />
                 }
                 <h5 class="card-title">@board.Title</h5>
                 @if (!string.IsNullOrWhiteSpace(board.Description))

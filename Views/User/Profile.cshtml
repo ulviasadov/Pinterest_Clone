@@ -21,7 +21,7 @@
                              style="width:80px;height:80px;object-fit:cover; cursor:pointer;"
                              data-bs-toggle="modal" data-bs-target="#profilePhotoModal" />
                         <div class="d-flex flex-column justify-content-center">
-                            <h2 class="card-title mb-1">@Model.Name</h2>
+                            <h2 class="card-title mb-1 user-select-none">@Model.Name</h2>
                             <div class="mb-0">
                                 <span class="me-3">Pins: @(ViewBag.PinCount ?? 0)</span>
                                 <span class="me-3" style="cursor:pointer;" data-bs-toggle="modal"
@@ -304,10 +304,5 @@
         {
             <p>No pins yet.</p>
         }
-    </div>
-</div>
-<div class="row mb-4">
-    <div class="col-md-8 offset-md-2">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Home</a>
     </div>
 </div>
