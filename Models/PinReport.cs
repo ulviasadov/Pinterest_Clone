@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace PinterestClone.Models
@@ -10,6 +9,7 @@ namespace PinterestClone.Models
         public int UserId { get; set; }
         [Required]
         public string Reason { get; set; } = string.Empty;
+        public Pin? Pin { get; set; }
         public DateTime ReportedAt { get; set; } = DateTime.Now;
     }
 }

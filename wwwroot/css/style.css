@@ -2,3 +2,36 @@
     margin: 0;
     height: 100dvh;
 }
+
+header{
+    background-color: #e30000;
+    color: #f1f1f1;
+    padding: 12px 24px;
+    margin-bottom: 10px;
+}
+
+.navigation{
+    justify-content: space-between;
+}
+
+.navigation__site--name{
+    font-weight: 500;
+}
+
+.pages ul, .navigation, .navigation__pages, .navigation__options ul {
+    display: flex;
+    margin: 0
+}
+
+.pages ul, .navigation__options ul {
+    gap: 10px;
+}
+
+.navigation__page a, .navigation__options a {
+    color: #f1f1f1;
+    text-decoration: none;
+}
+
+.pages ul, .navigation__options ul {
+    list-style-type: none;
+}

@@ -7,7 +7,7 @@
 
     var topUsers = ViewBag.TopUsers as List<PinterestClone.Models.User>;
     var topPins = ViewBag.TopPins as List<PinterestClone.Models.Pin>;
-    var topBoards = ViewBag.TopBoards as List<PinterestClone.Models.Board>; // Eğer ViewBag.TopBoards ekleyeceksen
+    var topBoards = ViewBag.TopBoards as List<PinterestClone.Models.Board>;
 
     var isAdmin = Context.Session.GetInt32("UserId") != null && ViewBag.IsAdmin == true;
 }

@@ -540,6 +540,22 @@ namespace PinterestClone.Controllers
 
         public IActionResult Dashboard()
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+                return RedirectToAction("Login");
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
+            if (user == null || !user.IsAdmin)
+                return View("Error", "Home");
+
+            ViewBag.UserCount = _context.Users.Count();
+            ViewBag.PinCount = _context.Pins.Count();
+            ViewBag.BoardCount = _context.Boards.Count();
+            ViewBag.ReportCount = _context.PinReports.Count();
+            ViewBag.TopUsers = _context.Users.OrderByDescending(u => u.Pins.Count).Take(5).ToList();
+            ViewBag.TopPins = _context.Pins.OrderByDescending(p => p.PinReports.Count()).Take(5).ToList();
+            ViewBag.TopBoards = _context.Boards.OrderByDescending(b => b.PinBoards.Count()).Take(5).ToList();
+            ViewBag.IsAdmin = user.IsAdmin;
+
             return View();
         }
     }

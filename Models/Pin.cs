@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace PinterestClone.Models
 {
@@ -22,5 +23,6 @@ namespace PinterestClone.Models
         public List<PinBoard> PinBoards { get; set; } = new();
         public List<PinLike> PinLikes { get; set; } = new();
         public List<PinComment> PinComments { get; set; } = new();
+        public List<PinReport> PinReports { get; set; } = new();
     }
 }
