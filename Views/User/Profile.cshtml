@@ -145,14 +145,10 @@
                                             aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    @if (ViewBag.FollowingList != null && ((List
-                                                                        <PinterestClone.Models.User>
-                                                                        )ViewBag.FollowingList).Any())
+                                    @if (ViewBag.FollowingList != null && ((List<PinterestClone.Models.User>)ViewBag.FollowingList).Any())
                                     {
                                         <ul class="list-group">
-                                            @foreach (var following in (List
-                                                                                    <PinterestClone.Models.User>
-                                                                                    )ViewBag.FollowingList)
+                                            @foreach (var following in (List<PinterestClone.Models.User>)ViewBag.FollowingList)
                                             {
                                                 <li class="list-group-item">
                                                     @following.Name
@@ -258,11 +254,14 @@
                             }
                         </div>
                         <div>
+                            @if (ViewContext.HttpContext.Session.GetInt32("UserId") == Model.Id)
+                            {
                             <a asp-controller="Board" asp-action="Edit" asp-route-id="@board.Id"
                                class="btn btn-sm btn-warning me-2">Edit</a>
                             <a asp-controller="Board" asp-action="Delete" asp-route-id="@board.Id"
                                class="btn btn-sm btn-danger"
                                onclick="return confirm('Are you sure you want to delete this board?');">Delete</a>
+                            }
                         </div>
                     </li>
                 }

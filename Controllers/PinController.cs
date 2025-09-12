@@ -25,7 +25,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login", "User");
 
             var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
-            if (pin == null) return NotFound();
+            if (pin == null) return View("Error", "Home");
 
             if (string.IsNullOrWhiteSpace(reason))
             {
@@ -56,7 +56,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login", "User");
 
             var pin = _context.Pins.FirstOrDefault(p => p.Id == pinId);
-            if (pin == null) return NotFound();
+            if (pin == null) return View("Error", "Home");
 
             var board = _context.Boards.FirstOrDefault(b => b.Id == boardId && b.UserId == userId.Value);
             if (board == null)
@@ -190,7 +190,7 @@ namespace PinterestClone.Controllers
                     .ThenInclude(pc => pc.User)
                 .FirstOrDefault(p => p.Id == id);
             if (pin == null)
-                return NotFound();
+                return View("Error", "Home");
 
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId != null)
@@ -244,7 +244,7 @@ namespace PinterestClone.Controllers
                 return Json(new { success = false, message = "You must be logged in." });
 
             var pin = _context.Pins.FirstOrDefault(p => p.Id == id);
-            if (pin == null) return NotFound();
+            if (pin == null) return View("Error", "Home");
 
             var alreadyLiked = _context.PinLikes.Any(pl => pl.PinId == id && pl.UserId == userId.Value);
             if (!alreadyLiked)
@@ -266,7 +266,7 @@ namespace PinterestClone.Controllers
                 return Json(new { success = false, message = "You must be logged in." });
 
             var pin = _context.Pins.FirstOrDefault(p => p.Id == id);
-            if (pin == null) return NotFound();
+            if (pin == null) return View("Error", "Home");
 
             var like = _context.PinLikes.FirstOrDefault(pl => pl.PinId == id && pl.UserId == userId.Value);
             if (like != null)

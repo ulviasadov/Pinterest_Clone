@@ -22,10 +22,10 @@ namespace PinterestClone.Controllers
 
             var currentUserId = HttpContext.Session.GetInt32("UserId");
             if (currentUserId == null)
-                return Unauthorized();
+                return View("Error", "Home");
 
             if (!await _context.Users.AnyAsync(u => u.Id == userId))
-                return BadRequest("User not found.");
+                return View("Error", "Home");
 
             int currentId = (int)currentUserId;
             if (currentId == userId) return BadRequest();
@@ -55,7 +55,7 @@ namespace PinterestClone.Controllers
 
             var currentUserId = HttpContext.Session.GetInt32("UserId");
             if (currentUserId == null)
-                return Unauthorized();
+                return View("Error", "Home");
 
             int currentId = (int)currentUserId;
 

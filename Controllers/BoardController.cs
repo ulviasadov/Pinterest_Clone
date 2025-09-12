@@ -96,7 +96,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login", "User");
             var board = await _context.Boards.FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
             if (board == null)
-                return NotFound();
+                return View("Error", "Home");
             return View(board);
         }
 
@@ -110,7 +110,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login", "User");
             var existingBoard = await _context.Boards.FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
             if (existingBoard == null)
-                return NotFound();
+                return View("Error", "Home");
             if (ModelState.IsValid)
             {
                 existingBoard.Title = board.Title;
@@ -130,7 +130,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login", "User");
             var board = await _context.Boards.FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId.Value);
             if (board == null)
-                return NotFound();
+                return View("Error", "Home");
             _context.Boards.Remove(board);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

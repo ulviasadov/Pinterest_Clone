@@ -80,10 +80,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXENvbXBvbmVudHNcSGVhZGVyXERlZmF1bHQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Shared/Error.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/Shared/_ProfilePhotoModal.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Qcm9maWxlUGhvdG9Nb2RhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -106,6 +102,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxEYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/Error.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlclxFcnJvci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/HP/Desktop/Tasks/CodeAcademy2/Pinterest_Clone/Views/User/ForgotPassword.cshtml]

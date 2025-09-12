@@ -391,7 +391,6 @@ C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\rjsmcsht
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\scopedcss\bundle\PinterestClone.styles.css
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\scopedcss\projectbundle\PinterestClone.bundle.scp.css
-C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\4z79bfnzuy-b9sayid5wm.gz
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\kiqopaxl77-61n19gt1b8.gz
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\ru66ig5o7b-t1cqhe9u97.gz
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\cqxqbjasbt-c2jlpeoesf.gz
@@ -480,7 +479,4 @@ C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compress
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\p3ntn9jkh3-ocapaiqrbe.gz
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\b23pnyahcw-ukm5joubzi.gz
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\3g44far76o-729llq7uo5.gz
-C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\cwmh5wx63o-bmqw4dui5t.gz
-C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\8fembm5z1e-0wfbw24bog.gz
-C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\6hus6ukxdy-sjib2b3gk2.gz
-C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\hh8ueu2y6u-atlr9on3ac.gz
+C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\compressed\6hus6ukxdy-b7al4y3y3y.gz

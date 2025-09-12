@@ -62,10 +62,10 @@ namespace PinterestClone.Controllers
         [HttpGet]
         public IActionResult ConfirmEmail(string token)
         {
-            if (string.IsNullOrEmpty(token)) return BadRequest();
+            if (string.IsNullOrEmpty(token)) return View("Error", "Home");
 
             var user = _context.Users.FirstOrDefault(u => u.EmailConfirmationToken == token);
-            if (user == null) return BadRequest();
+            if (user == null) return View("Error", "Home");
 
             user.EmailConfirmed = true;
             user.EmailConfirmationToken = null;
@@ -161,7 +161,7 @@ namespace PinterestClone.Controllers
             }
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (user == null)
-                return NotFound();
+                return View("Error", "Home");
             var pins = _context.Pins.Where(p => p.UserId == userId).OrderByDescending(p => p.Id).ToList();
             var boards = _context.Boards.Where(b => b.UserId == userId && (!b.IsPrivate || userId == HttpContext.Session.GetInt32("UserId"))).OrderByDescending(b => b.Id).ToList();
             var followersList = _context.Follows.Where(f => f.FollowingId == userId).Select(f => f.Follower).ToList();
@@ -197,7 +197,7 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-            if (user == null) return NotFound();
+            if (user == null) return View("Error", "Home");
 
             user.Bio = bio;
             _context.SaveChanges();
@@ -214,7 +214,7 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-            if (user == null) return NotFound();
+            if (user == null) return View("Error", "Home");
 
             if (profileImage != null && profileImage.Length > 0)
             {
@@ -244,7 +244,7 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-            if (user == null) return NotFound();
+            if (user == null) return View("Error", "Home");
 
             if (!string.IsNullOrEmpty(user.ProfileImagePath))
             {
@@ -268,7 +268,7 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null) return NotFound();
+            if (user == null) return View("Error", "Home");
 
             user.Name = newUsername;
 
@@ -357,7 +357,7 @@ namespace PinterestClone.Controllers
                 return RedirectToAction("Login");
             var user = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
             if (user == null || !user.IsAdmin)
-                return Unauthorized();
+                return View("Error", "Home");
             var users = _context.Users.AsQueryable();
             if (!string.IsNullOrWhiteSpace(userSearch))
             {
@@ -376,7 +376,7 @@ namespace PinterestClone.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (admin == null || !admin.IsAdmin) return View("Error", "Home");
             return View();
         }
 
@@ -388,7 +388,7 @@ namespace PinterestClone.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (admin == null || !admin.IsAdmin) return View("Error", "Home");
             if (_context.Users.Any(u => u.Email == user.Email))
             {
                 ModelState.AddModelError("Email", "This email address is already in use.");
@@ -412,9 +412,9 @@ namespace PinterestClone.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId.Value);
-            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (admin == null || !admin.IsAdmin) return View("Error", "Home");
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null) return NotFound();
+            if (user == null) return View("Error", "Home");
             return View(user);
         }
 
@@ -427,10 +427,10 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (admin == null || !admin.IsAdmin) return View("Error", "Home");
 
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null) return NotFound();
+            if (user == null) return View("Error", "Home");
 
             if (_context.Users.Any(u => u.Email == email && u.Id != id))
             {
@@ -453,10 +453,10 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (admin == null || !admin.IsAdmin) return View("Error", "Home");
 
             var user = _context.Users.FirstOrDefault(u => u.Id == id);
-            if (user == null || user.IsAdmin) return NotFound();
+            if (user == null || user.IsAdmin) return View("Error", "Home");
 
             var follows = _context.Follows.Where(f => f.FollowerId == id || f.FollowingId == id).ToList();
 
@@ -493,10 +493,10 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (admin == null || !admin.IsAdmin) return View("Error", "Home");
 
             var pin = _context.Pins.Include(p => p.PinComments).FirstOrDefault(p => p.Id == id);
-            if (pin == null) return NotFound();
+            if (pin == null) return View("Error", "Home");
 
             _context.PinComments.RemoveRange(pin.PinComments);
             _context.Pins.Remove(pin);
@@ -512,10 +512,10 @@ namespace PinterestClone.Controllers
             if (userId == null) return RedirectToAction("Login");
 
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (admin == null || !admin.IsAdmin) return Unauthorized();
+            if (admin == null || !admin.IsAdmin) return View("Error", "Home");
 
             var board = _context.Boards.Include(b => b.PinBoards).FirstOrDefault(b => b.Id == id);
-            if (board == null) return NotFound();
+            if (board == null) return View("Error", "Home");
 
             _context.PinBoards.RemoveRange(board.PinBoards);
             _context.Boards.Remove(board);
@@ -525,13 +525,13 @@ namespace PinterestClone.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditBoard(Board board)          //*******************************************************************************
+        public IActionResult EditBoard(Board board)
         {
             int? userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null) return RedirectToAction("Login");
 
             var boardUserId = _context.Boards.FirstOrDefault(b => b.UserId == userId);
-            if (boardUserId == null) return NotFound();
+            if (boardUserId == null) return View("Error", "Home");
 
             
 
