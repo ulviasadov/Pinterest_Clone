@@ -135,5 +135,21 @@ namespace PinterestClone.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        // GET: /Board/Detail/{id}
+        public IActionResult Detail(int id)
+        {
+            var board = _context.Boards
+                .Include(b => b.PinBoards)
+                .ThenInclude(pb => pb.Pin)
+                .FirstOrDefault(b => b.Id == id);
+
+            if (board == null)
+                return NotFound();
+
+            var pins = board.PinBoards.Select(pb => pb.Pin).ToList();
+            ViewBag.Pins = pins;
+
+            return View(board);
+        }
     }
 }

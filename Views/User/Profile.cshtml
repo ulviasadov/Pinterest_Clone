@@ -15,6 +15,7 @@
                         var defaultProfileImage = Url.Content("~/images/PP.jpg");
                         var showImage = !string.IsNullOrWhiteSpace(Model.ProfileImagePath) ?
                         Model.ProfileImagePath : defaultProfileImage;
+                        var isLoggedIn = ViewContext.HttpContext.Session.GetInt32("UserId") != null;
                     }
                     <div class="d-flex align-items-center w-100">
                         <img src="@showImage" alt="Profile Photo" class="rounded-circle me-3"
@@ -56,12 +57,16 @@
                         document.addEventListener('DOMContentLoaded', function () {
                             const followBtn = document.getElementById('followBtn');
                             const unfollowBtn = document.getElementById('unfollowBtn');
-                            const userId = followBtn ? followBtn.getAttribute('data-user-id') : (unfollowBtn ? unfollowBtn.getAttribute('data-user-id') : null);
+                            const isLoggedIn = @(isLoggedIn.ToString().ToLower());
 
                             if (followBtn) {
                                 followBtn.addEventListener('click', function (e) {
+                                    if (!isLoggedIn) {
+                                        window.location.href = '/User/Login';
+                                        return;
+                                    }
                                     e.preventDefault();
-                                    console.log(userId);
+                                    const userId = followBtn.getAttribute('data-user-id');
                                     fetch('/Follow/Follow', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
@@ -78,10 +83,10 @@
                                 });
                             }
 
-
                             if (unfollowBtn) {
                                 unfollowBtn.addEventListener('click', function (e) {
                                     e.preventDefault();
+                                    const userId = unfollowBtn.getAttribute('data-user-id');
                                     fetch('/Follow/Unfollow', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
@@ -239,7 +244,7 @@
                 @(string.IsNullOrEmpty(Model.Bio) ? "Add Bio" : "Edit Bio")
             </button>
         }
-        <h4>Your Boards</h4>
+        <h4>Boards</h4>
         @if (boards != null && boards.Any())
         {
             <ul class="list-group mb-3">
@@ -247,7 +252,20 @@
                 {
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div>
-                            <strong>@board.Title</strong>
+                            @if(board.CoverImagePath != null)
+                            {
+                                <img src=@board.CoverImagePath alt="Board image" style="width: 70px; height: 40px; object-fit: cover; border-radius: 5px;" />
+                            }
+                            else
+                            {
+                                <img src="~/images/Empty-board-cover.jpg" alt="Board image" style="width: 70px; height: 40px; object-fit: cover; border-radius: 5px;" />
+                            }
+
+                            <strong>
+                                <a asp-controller="Board" asp-action="Detail" asp-route-id="@board.Id" class="text-decoration-none">
+                                    @board.Title
+                                </a>
+                            </strong>
                             @if (!string.IsNullOrWhiteSpace(board.Description))
                             {
                                 <span class="text-muted">- @board.Description</span>
@@ -256,11 +274,11 @@
                         <div>
                             @if (ViewContext.HttpContext.Session.GetInt32("UserId") == Model.Id)
                             {
-                            <a asp-controller="Board" asp-action="Edit" asp-route-id="@board.Id"
-                               class="btn btn-sm btn-warning me-2">Edit</a>
-                            <a asp-controller="Board" asp-action="Delete" asp-route-id="@board.Id"
-                               class="btn btn-sm btn-danger"
-                               onclick="return confirm('Are you sure you want to delete this board?');">Delete</a>
+                                <a asp-controller="Board" asp-action="Edit" asp-route-id="@board.Id"
+                                   class="btn btn-sm btn-warning me-2">Edit</a>
+                                <a asp-controller="Board" asp-action="Delete" asp-route-id="@board.Id"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirm('Are you sure you want to delete this board?');">Delete</a>
                             }
                         </div>
                     </li>
@@ -275,7 +293,7 @@
 </div>
 <div class="row mb-4">
     <div class="col-md-8 offset-md-2">
-        <h4>Your Pins</h4>
+        <h4>Pins</h4>
         @if (pins != null && pins.Any())
         {
             <div class="row">

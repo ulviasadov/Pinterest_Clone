@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using PinterestClone.Models;
+using Microsoft.EntityFrameworkCore;
 using PinterestClone.Data;
+using PinterestClone.Models;
 
 namespace PinterestClone.Controllers;
 
@@ -17,39 +17,61 @@ public class HomeController : Controller
         _context = context;
     }
 
-    public IActionResult Index(string search, string filter)
+    public IActionResult Index(string? search, string? filter)
     {
-        if (HttpContext.Session.GetInt32("UserId") == null)
-        {
-            var userIdCookie = Request.Cookies["UserId"];
-            var userNameCookie = Request.Cookies["UserName"];
-            if (!string.IsNullOrEmpty(userIdCookie) && !string.IsNullOrEmpty(userNameCookie))
-            {
-                if (int.TryParse(userIdCookie, out int userId))
-                {
-                    HttpContext.Session.SetInt32("UserId", userId);
-                    HttpContext.Session.SetString("UserName", userNameCookie);
-                }
-            }
-        }
+        var userId = HttpContext.Session.GetInt32("UserId");
+        List<Pin> pins = new();
+        List<User> users = new();
 
-        var pins = new List<Pin>();
-        var users = new List<User>();
         if (!string.IsNullOrWhiteSpace(search))
         {
-            if (string.IsNullOrEmpty(filter) || filter == "pins")
-            {
-                pins = _context.Pins.Where(p => p.Title.Contains(search) || (p.Description != null && p.Description.Contains(search))).ToList();
-            }
+            pins = _context.Pins
+                .Include(p => p.User)
+                .Where(p => p.Title.Contains(search) || (p.Description != null && p.Description.Contains(search)))
+                .OrderByDescending(p => p.Id)
+                .ToList();
+
             if (string.IsNullOrEmpty(filter) || filter == "accounts")
             {
-                users = _context.Users.Where(u => u.Name.Contains(search) || u.Email.Contains(search)).ToList();
+                users = _context.Users
+                    .Where(u => u.Name.Contains(search) || u.Email.Contains(search))
+                    .ToList();
             }
+
+            ViewBag.Pins = pins;
+            ViewBag.Users = users;
+            ViewBag.Search = search;
+            ViewBag.Filter = filter;
+            ViewBag.FollowingPins = null;
         }
-        ViewBag.Pins = pins;
-        ViewBag.Users = users;
-        ViewBag.Search = search;
-        ViewBag.Filter = filter;
+        else if (userId != null)
+        {
+            var followingIds = _context.Follows
+                .Where(f => f.FollowerId == userId.Value)
+                .Select(f => f.FollowingId)
+                .ToList();
+
+            var followingPins = _context.Pins
+                .Where(p => followingIds.Contains(p.UserId))
+                .Include(p => p.User)
+                .OrderByDescending(p => p.Id)
+                .ToList();
+
+            ViewBag.FollowingPins = followingPins;
+            ViewBag.Pins = null;
+            ViewBag.Users = null;
+            ViewBag.Search = null;
+            ViewBag.Filter = null;
+        }
+        else
+        {
+            ViewBag.FollowingPins = new List<Pin>();
+            ViewBag.Pins = null;
+            ViewBag.Users = null;
+            ViewBag.Search = null;
+            ViewBag.Filter = null;
+        }
+
         return View();
     }
 
@@ -61,6 +83,6 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-    return View();
+        return View();
     }
 }
