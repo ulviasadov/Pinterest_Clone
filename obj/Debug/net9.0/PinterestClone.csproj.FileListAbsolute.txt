@@ -479,3 +479,4 @@ C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\refint\P
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\PinterestClone.pdb
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\PinterestClone.genruntimeconfig.cache
 C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\ref\PinterestClone.dll
+C:\Users\HP\Desktop\Tasks\CodeAcademy2\Pinterest_Clone\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

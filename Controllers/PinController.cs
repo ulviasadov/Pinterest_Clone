@@ -185,23 +185,20 @@ namespace PinterestClone.Controllers
         public IActionResult Details(int id)
         {
             var pin = _context.Pins
+                .Include(p => p.PinLikes)
                 .Include(p => p.User)
                 .Include(p => p.PinComments)
-                    .ThenInclude(pc => pc.User)
                 .FirstOrDefault(p => p.Id == id);
+
             if (pin == null)
-                return View("Error", "Home");
+                return NotFound();
 
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId != null)
             {
-                var boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
-                ViewBag.Boards = boards;
+                ViewBag.Boards = _context.Boards.Where(b => b.UserId == userId.Value).ToList();
             }
-            else
-            {
-                ViewBag.Boards = null;
-            }
+
             return View(pin);
         }
 

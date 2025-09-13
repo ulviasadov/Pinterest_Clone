@@ -495,10 +495,16 @@ namespace PinterestClone.Controllers
             var admin = _context.Users.FirstOrDefault(u => u.Id == userId);
             if (admin == null || !admin.IsAdmin) return View("Error", "Home");
 
-            var pin = _context.Pins.Include(p => p.PinComments).FirstOrDefault(p => p.Id == id);
+            var pin = _context.Pins
+                .Include(p => p.PinComments)
+                .Include(p => p.PinReports)
+                .FirstOrDefault(p => p.Id == id);
             if (pin == null) return View("Error", "Home");
 
+            _context.PinReports.RemoveRange(pin.PinReports);
+
             _context.PinComments.RemoveRange(pin.PinComments);
+
             _context.Pins.Remove(pin);
             _context.SaveChanges();
 
@@ -550,9 +556,14 @@ namespace PinterestClone.Controllers
             ViewBag.UserCount = _context.Users.Count();
             ViewBag.PinCount = _context.Pins.Count();
             ViewBag.BoardCount = _context.Boards.Count();
-            ViewBag.ReportCount = _context.PinReports.Count();
+            ViewBag.ReportCount = _context.PinReports
+    .Count(r => _context.Pins.Any(p => p.Id == r.PinId));
             ViewBag.TopUsers = _context.Users.OrderByDescending(u => u.Pins.Count).Take(5).ToList();
-            ViewBag.TopPins = _context.Pins.OrderByDescending(p => p.PinReports.Count()).Take(5).ToList();
+            ViewBag.TopPins = _context.Pins
+                .Where(p => p.PinReports.Any())
+                .OrderByDescending(p => p.PinReports.Count)
+                .Take(5)
+                .ToList();
             ViewBag.TopBoards = _context.Boards.OrderByDescending(b => b.PinBoards.Count()).Take(5).ToList();
             ViewBag.IsAdmin = user.IsAdmin;
 

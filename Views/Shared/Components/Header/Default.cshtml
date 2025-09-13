@@ -5,7 +5,7 @@
     var profileImage = ViewBag.ProfileImagePath as string;
 }
 
-@* <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container-fluid">
         <span class="me-3 fw-medium">SnapNest</span>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -14,22 +14,22 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                @if (isAdmin)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Dashboard</a>
-                    </li>
-                }
                 <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="Pin" asp-action="Index">Pins</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="Board" asp-action="Index">Boards</a></li>
                 <li class="nav-item"><a class="nav-link" asp-controller="Pin" asp-action="Explore">Explore</a></li>
+                @if (isAdmin)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="User" asp-action="Dashboard">Dashboard</a>
+                    </li>
+                }
             </ul>
 
             <ul class="navbar-nav">
                 @if (userId.HasValue)
                 {
-                    <li class="nav-item d-flex align-items-center"><span class="nav-link">Welcome, @userName!</span></li>
+                    @* <li class="nav-item d-flex align-items-center"><span class="nav-link">Welcome, @userName!</span></li> *@
                     <li><a class="nav-link" asp-controller="User" asp-action="Profile">Profile</a></li>
                     <li class="nav-item"><a class="nav-link" asp-controller="User" asp-action="Logout">Logout</a></li>
                 }
@@ -41,9 +41,9 @@
             </ul>
         </div>
     </div>
-</nav> *@
+</nav>
 
-<nav class="navigation">
+@* <nav class="navigation">
     <div class="navigation__pages">
         <div class="navigation__site--name">SnapNest</div>
         <div class="pages">
@@ -63,7 +63,7 @@
         <ul>
             @if (userId.HasValue)
             {
-                @* <li class="navigation__page"><span class="nav-link">Welcome, @userName!</span></li> *@
+                <li class="navigation__page"><span class="nav-link">Welcome, @userName!</span></li>
                 <li class="navigation__page"><a asp-controller="User" asp-action="Profile">Profile</a></li>
                 <li class="navigation__page"><a asp-controller="User" asp-action="Logout">Logout</a></li>
             }
@@ -74,4 +74,4 @@
             }
         </ul>
     </div>
-</nav>
+</nav> *@
