@@ -60,3 +60,24 @@ Pinterest_Clone/
 ├── Program.cs
 ├── PinterestClone.csproj
 └── package.json
+```
+
+The project uses a structured MVC-based layout with separate folders for controllers, models, data access, services, view models, and frontend assets.
+
+## Database Design
+
+The application uses Entity Framework Core with SQL Server and includes entities such as:
+
+- User
+- Pin
+- Board
+- PinBoard
+- PinLike
+- PinComment
+- Follow
+- PinReport
+
+## How to Run the Project
+1. Clone the repository
+   git clone https://github.com/ulviasadov/Pinterest_Clone.git
+   cd Pinterest_Clone
