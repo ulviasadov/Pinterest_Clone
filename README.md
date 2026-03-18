@@ -88,9 +88,8 @@ cd Pinterest_Clone
 
 ### 2. Configure the database connection
 
-Update the DefaultConnection value in appsettings.json to match your SQL Server setup. The project is configured to use SQL Server through Entity Framework Core.
+Update the `DefaultConnection` value in `appsettings.json` to match your SQL Server setup. The project is configured to use SQL Server through Entity Framework Core.
 
-```md
 ```json
 "ConnectionStrings": {
   "DefaultConnection": "Server=YOUR_SERVER_NAME;Database=PinterestCloneDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
@@ -99,9 +98,8 @@ Update the DefaultConnection value in appsettings.json to match your SQL Server 
 
 ### 3. Configure SMTP settings
 
-Set your SMTP credentials in appsettings.json so email confirmation and password reset features can work.
+Set your SMTP credentials in `appsettings.json` so email confirmation and password reset features can work.
 
-```md
 ```json
 "Smtp": {
   "Host": "smtp.gmail.com",
@@ -139,7 +137,7 @@ dotnet run
 
 ## Important Note
 
-Before using this project publicly, sensitive configuration values such as connection strings and SMTP credentials should be removed from appsettings.json and stored securely using environment variables or user secrets. The current repository view shows both a SQL Server connection string and SMTP credentials in appsettings.json, so rotating those secrets would be a good idea.
+Before using this project publicly, sensitive configuration values such as connection strings and SMTP credentials should be removed from `appsettings.json` and stored securely using environment variables or user secrets. The current repository view shows both a SQL Server connection string and SMTP credentials in `appsettings.json`, so rotating those secrets would be a good idea.
 
 ## Author
 
